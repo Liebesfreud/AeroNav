@@ -15,6 +15,17 @@ export default {
         outline: "#E5E7EB",
         "surface-container": "#F3F4F1",
         "surface-container-low": "#FAF9F7",
+        dark: {
+          background: '#111315',
+          surface: '#171A1D',
+          'surface-elevated': '#1F2328',
+          'on-background': '#F5F7F5',
+          'on-surface': '#F3F5F3',
+          'on-surface-variant': '#A1A8A4',
+          outline: '#31363B',
+          'surface-container': '#22272B',
+          'surface-container-low': '#1A1E22',
+        },
         accent: "#d97757",
         app: {
           discord: '#5865F2',
@@ -38,7 +49,7 @@ export default {
         app: '28px'
       },
       fontFamily: {
-        headline: ["Manrope", "sans-serif"],
+        headline: ["Inter", "sans-serif"],
         body: ["Inter", "sans-serif"],
         label: ["Inter", "sans-serif"]
       },

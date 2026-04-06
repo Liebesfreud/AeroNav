@@ -1,6 +1,5 @@
 export const navigationItems = [
-  { name: 'Dashboard', path: '/', icon: 'home' },
-  { name: 'Widgets', path: '/widgets', icon: 'grid_view' },
-  { name: 'Bookmarks', path: '/bookmarks', icon: 'bookmarks' },
-  { name: 'Settings', path: '/settings', icon: 'settings' },
+  { name: '主页', path: '/', icon: 'home' },
+  { name: '书签', path: '/bookmarks', icon: 'bookmarks' },
+  { name: '设置', path: '/settings', icon: 'settings' },
 ] as const

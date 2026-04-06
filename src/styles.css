@@ -6,18 +6,47 @@
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #0f172a;
+  --app-bg: #F9F8F6;
+  --app-text: #2F3331;
+  --app-surface: #FFFFFF;
+  --app-surface-low: #FAF9F7;
+  --app-surface-container: #F3F4F1;
+  --app-surface-elevated: rgba(255, 255, 255, 0.78);
+  --app-border: rgba(17, 24, 39, 0.08);
+  --app-border-strong: rgba(17, 24, 39, 0.14);
+  --app-text-muted: rgba(47, 51, 49, 0.6);
+  --app-text-subtle: rgba(47, 51, 49, 0.42);
+  --app-hover: rgba(153, 70, 42, 0.06);
+  --app-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --app-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --app-soft-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.04);
 }
 
 :root.dark {
   color-scheme: dark;
   color: #f8fafc;
+  --app-bg: #111315;
+  --app-text: #F5F7F5;
+  --app-surface: #171A1D;
+  --app-surface-low: #1A1E22;
+  --app-surface-container: #22272B;
+  --app-surface-elevated: rgba(31, 35, 40, 0.82);
+  --app-border: rgba(161, 168, 164, 0.16);
+  --app-border-strong: rgba(161, 168, 164, 0.26);
+  --app-text-muted: rgba(245, 247, 245, 0.68);
+  --app-text-subtle: rgba(245, 247, 245, 0.45);
+  --app-hover: rgba(217, 119, 87, 0.14);
+  --app-shadow: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.22);
+  --app-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --app-soft-shadow: 0 10px 32px -10px rgba(0, 0, 0, 0.55);
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #F9F8F6;
-  color: #2F3331;
+  background-color: var(--app-bg);
+  color: var(--app-text);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .material-symbols-outlined {
@@ -25,13 +54,13 @@ body {
 }
 
 .paper-card {
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
-  transition: all 0.3s ease;
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .paper-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--app-shadow-hover);
   transform: translateY(-2px);
 }
 
@@ -40,17 +69,17 @@ body {
 }
 
 .card-panel {
-  background: #FFFFFF;
-  border: 1px solid #F3F4F1;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
 }
 
 .elegant-border {
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--app-border);
 }
 
 .soft-shadow {
-  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--app-soft-shadow);
 }
 
 * {

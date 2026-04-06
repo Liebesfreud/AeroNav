@@ -1,0 +1,3 @@
+ALTER TABLE settings ADD COLUMN weather_enabled INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE settings ADD COLUMN weather_auto_locate INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE settings ADD COLUMN temperature_unit TEXT NOT NULL DEFAULT 'system';

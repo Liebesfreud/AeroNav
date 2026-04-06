@@ -6,6 +6,7 @@ import { createLink, deleteLink, updateLink } from './routes/links'
 import { exportData, importData } from './routes/importExport'
 import { health } from './routes/health'
 import { reorderEntities } from './routes/reorder'
+import { getWeather } from './routes/weather'
 
 function notFound() {
   throw new ApiError(404, 'NOT_FOUND', 'Route not found')
@@ -58,6 +59,9 @@ export default {
         }
         if (url.pathname === '/api/import' && request.method === 'POST') {
           return await importData(request, env)
+        }
+        if (url.pathname === '/api/weather' && request.method === 'GET') {
+          return await getWeather(request)
         }
 
         notFound()

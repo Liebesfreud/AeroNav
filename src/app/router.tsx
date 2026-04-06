@@ -3,7 +3,6 @@ import { App } from './App'
 import { NavigationPage } from '../features/navigation/NavigationPage'
 import { SettingsPage } from '../features/settings/SettingsPage'
 import { BookmarksPage } from '../features/bookmarks/BookmarksPage'
-import { WidgetsPage } from '../features/widgets/WidgetsPage'
 
 export const router = createBrowserRouter([
   {
@@ -21,10 +20,6 @@ export const router = createBrowserRouter([
       {
         path: 'bookmarks',
         element: <BookmarksPage />
-      },
-      {
-        path: 'widgets',
-        element: <WidgetsPage />
       }
     ]
   },

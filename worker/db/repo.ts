@@ -27,6 +27,7 @@ export function mapLink(row: LinkRow) {
     url: row.url,
     icon: row.icon,
     description: row.description,
+    tileSize: row.tile_size,
     sortOrder: row.sort_order,
     pinned: Boolean(row.pinned),
     archived: Boolean(row.archived),
@@ -41,6 +42,10 @@ export function mapSettings(row: SettingsRow) {
     cardDensity: row.card_density,
     openInNewTab: Boolean(row.open_in_new_tab),
     showGroupIcons: Boolean(row.show_group_icons),
+    searchEngine: row.search_engine,
+    weatherEnabled: Boolean(row.weather_enabled),
+    weatherAutoLocate: Boolean(row.weather_auto_locate),
+    temperatureUnit: row.temperature_unit,
     updatedAt: row.updated_at,
   }
 }

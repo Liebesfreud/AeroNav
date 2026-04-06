@@ -26,6 +26,7 @@ export type LinkRow = {
   url: string
   icon: string | null
   description: string | null
+  tile_size: '1x1' | '1x2'
   sort_order: number
   pinned: number
   archived: number
@@ -39,5 +40,9 @@ export type SettingsRow = {
   card_density: 'compact' | 'comfortable'
   open_in_new_tab: number
   show_group_icons: number
+  search_engine: 'google' | 'bing'
+  weather_enabled: number
+  weather_auto_locate: number
+  temperature_unit: 'system' | 'c' | 'f'
   updated_at: string
 }
