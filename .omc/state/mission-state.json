@@ -1,0 +1,179 @@
+{
+  "updatedAt": "2026-04-06T11:47:29.619Z",
+  "missions": [
+    {
+      "id": "session:24680952-4552-4c33-9a74-a487573c060e:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-04-06T08:03:16.820Z",
+      "updatedAt": "2026-04-06T08:04:30.147Z",
+      "status": "done",
+      "workerCount": 3,
+      "taskCounts": {
+        "total": 3,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 3,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "repo-explorer:a1a80da",
+          "role": "repo-explorer",
+          "ownership": "a1a80daaf2210621b",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-04-06T08:04:30.147Z"
+        },
+        {
+          "name": "repo-explorer:af33521",
+          "role": "repo-explorer",
+          "ownership": "af33521283c4f5f7c",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-04-06T08:03:53.043Z"
+        },
+        {
+          "name": "frontend-explorer:a2cab9b",
+          "role": "frontend-explorer",
+          "ownership": "a2cab9b34bfdc4b97",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-04-06T08:04:24.732Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:a1a80daaf2210621b:2026-04-06T08:03:16.820Z",
+          "at": "2026-04-06T08:03:16.820Z",
+          "kind": "update",
+          "agent": "repo-explorer:a1a80da",
+          "detail": "started repo-explorer:a1a80da",
+          "sourceKey": "session-start:a1a80daaf2210621b"
+        },
+        {
+          "id": "session-start:af33521283c4f5f7c:2026-04-06T08:03:25.762Z",
+          "at": "2026-04-06T08:03:25.762Z",
+          "kind": "update",
+          "agent": "repo-explorer:af33521",
+          "detail": "started repo-explorer:af33521",
+          "sourceKey": "session-start:af33521283c4f5f7c"
+        },
+        {
+          "id": "session-start:a2cab9b34bfdc4b97:2026-04-06T08:03:25.828Z",
+          "at": "2026-04-06T08:03:25.828Z",
+          "kind": "update",
+          "agent": "frontend-explorer:a2cab9b",
+          "detail": "started frontend-explorer:a2cab9b",
+          "sourceKey": "session-start:a2cab9b34bfdc4b97"
+        },
+        {
+          "id": "session-stop:af33521283c4f5f7c:2026-04-06T08:03:53.043Z",
+          "at": "2026-04-06T08:03:53.043Z",
+          "kind": "completion",
+          "agent": "repo-explorer:af33521",
+          "detail": "completed",
+          "sourceKey": "session-stop:af33521283c4f5f7c"
+        },
+        {
+          "id": "session-stop:a2cab9b34bfdc4b97:2026-04-06T08:04:24.732Z",
+          "at": "2026-04-06T08:04:24.732Z",
+          "kind": "completion",
+          "agent": "frontend-explorer:a2cab9b",
+          "detail": "completed",
+          "sourceKey": "session-stop:a2cab9b34bfdc4b97"
+        },
+        {
+          "id": "session-stop:a1a80daaf2210621b:2026-04-06T08:04:30.147Z",
+          "at": "2026-04-06T08:04:30.147Z",
+          "kind": "completion",
+          "agent": "repo-explorer:a1a80da",
+          "detail": "completed",
+          "sourceKey": "session-stop:a1a80daaf2210621b"
+        }
+      ]
+    },
+    {
+      "id": "session:48a11ccf-1a53-41e1-ab5f-8bf7cf1eaf78:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-04-06T11:42:52.261Z",
+      "updatedAt": "2026-04-06T11:47:29.619Z",
+      "status": "done",
+      "workerCount": 2,
+      "taskCounts": {
+        "total": 2,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 2,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "ui-designer:a75fd5f",
+          "role": "ui-designer",
+          "ownership": "a75fd5fd4c521b01b",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-04-06T11:45:45.569Z"
+        },
+        {
+          "name": "layout-explorer:aa0ac03",
+          "role": "layout-explorer",
+          "ownership": "aa0ac03202311c1d8",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-04-06T11:47:29.619Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:a75fd5fd4c521b01b:2026-04-06T11:42:52.261Z",
+          "at": "2026-04-06T11:42:52.261Z",
+          "kind": "update",
+          "agent": "ui-designer:a75fd5f",
+          "detail": "started ui-designer:a75fd5f",
+          "sourceKey": "session-start:a75fd5fd4c521b01b"
+        },
+        {
+          "id": "session-start:aa0ac03202311c1d8:2026-04-06T11:45:36.158Z",
+          "at": "2026-04-06T11:45:36.158Z",
+          "kind": "update",
+          "agent": "layout-explorer:aa0ac03",
+          "detail": "started layout-explorer:aa0ac03",
+          "sourceKey": "session-start:aa0ac03202311c1d8"
+        },
+        {
+          "id": "session-stop:a75fd5fd4c521b01b:2026-04-06T11:45:45.569Z",
+          "at": "2026-04-06T11:45:45.569Z",
+          "kind": "completion",
+          "agent": "ui-designer:a75fd5f",
+          "detail": "completed",
+          "sourceKey": "session-stop:a75fd5fd4c521b01b"
+        },
+        {
+          "id": "session-stop:aa0ac03202311c1d8:2026-04-06T11:47:29.619Z",
+          "at": "2026-04-06T11:47:29.619Z",
+          "kind": "completion",
+          "agent": "layout-explorer:aa0ac03",
+          "detail": "completed",
+          "sourceKey": "session-stop:aa0ac03202311c1d8"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,393 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775471915129,
+  "projectRoot": "d:\\Project\\AeroNav",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.1.1",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.1.1",
+        "category": "frontend"
+      },
+      {
+        "name": "vite",
+        "version": "7.1.7",
+        "category": "build"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "vite",
+      "build": "tsc -b && vite build",
+      "preview": "vite preview",
+      "typecheck": "tsc --noEmit",
+      "cf:dev": "wrangler dev",
+      "cf:deploy": "wrangler deploy",
+      "db:migrate:local": "wrangler d1 migrations apply DB --local",
+      "db:migrate:remote": "wrangler d1 migrations apply DB"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "feature-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 1,
+      "lastAccessed": 1775471915074,
+      "keyFiles": [
+        "index.html"
+      ]
+    },
+    "migrations": {
+      "path": "migrations",
+      "purpose": "Database migrations",
+      "fileCount": 1,
+      "lastAccessed": 1775471915075,
+      "keyFiles": [
+        "0001_init.sql"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 0,
+      "lastAccessed": 1775471915106,
+      "keyFiles": []
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 2,
+      "lastAccessed": 1775471915107,
+      "keyFiles": [
+        "main.tsx",
+        "styles.css"
+      ]
+    },
+    "worker": {
+      "path": "worker",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1775471915107,
+      "keyFiles": [
+        "index.ts"
+      ]
+    },
+    "dist\\assets": {
+      "path": "dist\\assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1775471915107,
+      "keyFiles": [
+        "index-CfoWq4s2.js",
+        "index-DqnLJtrR.css"
+      ]
+    },
+    "src\\app": {
+      "path": "src\\app",
+      "purpose": "Application code",
+      "fileCount": 2,
+      "lastAccessed": 1775471915109,
+      "keyFiles": [
+        "App.tsx",
+        "router.tsx"
+      ]
+    },
+    "src\\components": {
+      "path": "src\\components",
+      "purpose": "UI components",
+      "fileCount": 6,
+      "lastAccessed": 1775471915109,
+      "keyFiles": [
+        "Button.tsx",
+        "ConfirmDialog.tsx",
+        "Drawer.tsx"
+      ]
+    },
+    "src\\lib": {
+      "path": "src\\lib",
+      "purpose": "Library code",
+      "fileCount": 2,
+      "lastAccessed": 1775471915109,
+      "keyFiles": [
+        "api.ts",
+        "theme.ts"
+      ]
+    },
+    "worker\\routes": {
+      "path": "worker\\routes",
+      "purpose": "Route handlers",
+      "fileCount": 6,
+      "lastAccessed": 1775471915110,
+      "keyFiles": [
+        "bootstrap.ts",
+        "groups.ts",
+        "health.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 48,
+      "lastAccessed": 1775476393342,
+      "type": "directory"
+    },
+    {
+      "path": "src\\features\\navigation\\NavigationPage.tsx",
+      "accessCount": 22,
+      "lastAccessed": 1775476290892,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\settings\\SettingsPage.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1775476221481,
+      "type": "file"
+    },
+    {
+      "path": "src\\app\\App.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1775475966028,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\PageShell.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1775475966064,
+      "type": "file"
+    },
+    {
+      "path": "src\\app\\router.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1775475982299,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\bookmarks\\BookmarksPage.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1775476149001,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\SideNavBar.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1775476290943,
+      "type": "file"
+    },
+    {
+      "path": "src\\main.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1775475982375,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\widgets\\WidgetsPage.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1775476148942,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\TopNavBar.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1775476290819,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\Layout.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1775476290866,
+      "type": "file"
+    },
+    {
+      "path": "src\\lib\\api.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775473052124,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Button.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1775475858511,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 4,
+      "lastAccessed": 1775475897108,
+      "type": "file"
+    },
+    {
+      "path": "src\\styles.css",
+      "accessCount": 4,
+      "lastAccessed": 1775475966010,
+      "type": "file"
+    },
+    {
+      "path": "worker\\auth\\access.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775473038931,
+      "type": "file"
+    },
+    {
+      "path": "worker\\index.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775473038955,
+      "type": "file"
+    },
+    {
+      "path": "src\\lib\\theme.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775475947598,
+      "type": "file"
+    },
+    {
+      "path": "tailwind.config.js",
+      "accessCount": 3,
+      "lastAccessed": 1775475947617,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\LIEBES~1\\AppData\\Local\\Temp\\claude\\d--Project-AeroNav\\70744299-350e-434a-b697-e421dd4d7427\\tasks\\brd9q01tc.output",
+      "accessCount": 2,
+      "lastAccessed": 1775472605331,
+      "type": "file"
+    },
+    {
+      "path": "worker\\routes\\importExport.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775473086118,
+      "type": "file"
+    },
+    {
+      "path": "worker\\db\\repo.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775473086169,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 2,
+      "lastAccessed": 1775475796183,
+      "type": "directory"
+    },
+    {
+      "path": "src\\components\\Input.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775475858466,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Drawer.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775475864605,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\ConfirmDialog.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775475864698,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\SearchBar.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775475947666,
+      "type": "file"
+    },
+    {
+      "path": "wrangler.jsonc",
+      "accessCount": 1,
+      "lastAccessed": 1775472451416,
+      "type": "file"
+    },
+    {
+      "path": "vite.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775472497056,
+      "type": "file"
+    },
+    {
+      "path": "worker\\routes\\bootstrap.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775473039008,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\Liebesfreud\\.claude\\plans\\peaceful-doodling-plum.md",
+      "accessCount": 1,
+      "lastAccessed": 1775473110852,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\EmptyState.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775475871274,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\Liebesfreud\\.claude\\plans\\abundant-tinkering-flamingo.md",
+      "accessCount": 1,
+      "lastAccessed": 1775475981215,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\navigationItems.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775476304228,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\PageContainer.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775476305484,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
