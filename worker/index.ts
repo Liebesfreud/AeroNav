@@ -6,6 +6,7 @@ import { createLink, deleteLink, updateLink } from './routes/links'
 import { exportData, importData } from './routes/importExport'
 import { health } from './routes/health'
 import { reorderEntities } from './routes/reorder'
+import { updateUser } from './routes/user'
 import { getWeather } from './routes/weather'
 
 function notFound() {
@@ -33,6 +34,9 @@ export default {
         if (url.pathname === '/api/bootstrap' && request.method === 'GET') {
           return await bootstrap(env, user)
         }
+        if (url.pathname === '/api/user' && request.method === 'PATCH') {
+          return await updateUser(request, env, user)
+        }
         if (url.pathname === '/api/groups' && request.method === 'POST') {
           return await createGroup(request, env)
         }
@@ -40,7 +44,7 @@ export default {
           return await updateGroup(request, env, getIdFromPath(url.pathname))
         }
         if (url.pathname.startsWith('/api/groups/') && request.method === 'DELETE') {
-          return await deleteGroup(env, getIdFromPath(url.pathname))
+          return await deleteGroup(env, user, getIdFromPath(url.pathname))
         }
         if (url.pathname === '/api/links' && request.method === 'POST') {
           return await createLink(request, env)
@@ -49,16 +53,16 @@ export default {
           return await updateLink(request, env, getIdFromPath(url.pathname))
         }
         if (url.pathname.startsWith('/api/links/') && request.method === 'DELETE') {
-          return await deleteLink(env, getIdFromPath(url.pathname))
+          return await deleteLink(env, user, getIdFromPath(url.pathname))
         }
         if (url.pathname === '/api/reorder' && request.method === 'POST') {
-          return await reorderEntities(request, env)
+          return await reorderEntities(request, env, user)
         }
         if (url.pathname === '/api/export' && request.method === 'GET') {
-          return await exportData(env)
+          return await exportData(env, user)
         }
         if (url.pathname === '/api/import' && request.method === 'POST') {
-          return await importData(request, env)
+          return await importData(request, env, user)
         }
         if (url.pathname === '/api/weather' && request.method === 'GET') {
           return await getWeather(request)

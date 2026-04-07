@@ -8,6 +8,14 @@ export type User = {
   email: string
   subject: string
   name: string | null
+  displayName: string | null
+}
+
+export type UserProfileRow = {
+  subject: string
+  display_name: string | null
+  created_at: string
+  updated_at: string
 }
 
 export type GroupRow = {
@@ -25,11 +33,14 @@ export type LinkRow = {
   title: string
   url: string
   icon: string | null
+  icon_mode: 'favicon' | 'material' | 'image' | 'text'
+  icon_image_url: string | null
+  icon_text: string | null
   description: string | null
-  tile_size: '1x1' | '1x2'
+  tile_size: '1x1' | '1x3'
+  open_mode: 'global' | 'same-tab' | 'new-tab'
+  background_color: string | null
   sort_order: number
-  pinned: number
-  archived: number
   created_at: string
   updated_at: string
 }
@@ -44,5 +55,8 @@ export type SettingsRow = {
   weather_enabled: number
   weather_auto_locate: number
   temperature_unit: 'system' | 'c' | 'f'
+  wallpaper_url: string | null
+  wallpaper_overlay_opacity: number
+  wallpaper_blur: number
   updated_at: string
 }

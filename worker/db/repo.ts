@@ -1,4 +1,4 @@
-import type { GroupRow, LinkRow, SettingsRow, Env } from './schema'
+import type { GroupRow, LinkRow, SettingsRow, Env, UserProfileRow, User } from './schema'
 
 export function nowIso() {
   return new Date().toISOString()
@@ -6,6 +6,33 @@ export function nowIso() {
 
 export function createId(prefix: string) {
   return `${prefix}_${crypto.randomUUID()}`
+}
+
+export function applyUserProfile(user: User, profile: UserProfileRow | null) {
+  const displayName = profile?.display_name?.trim() || user.name || null
+
+  return {
+    ...user,
+    name: user.name,
+    displayName,
+  }
+}
+
+export async function getUserProfile(env: Env, subject: string) {
+  return await env.DB.prepare('SELECT * FROM user_profiles WHERE subject = ?').bind(subject).first<UserProfileRow>()
+}
+
+export async function upsertUserProfile(env: Env, subject: string, displayName: string | null) {
+  const now = nowIso()
+  await env.DB.prepare(
+    `INSERT INTO user_profiles (subject, display_name, created_at, updated_at)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(subject) DO UPDATE SET display_name = excluded.display_name, updated_at = excluded.updated_at`,
+  )
+    .bind(subject, displayName, now, now)
+    .run()
+
+  return await getUserProfile(env, subject)
 }
 
 export function mapGroup(row: GroupRow) {
@@ -26,11 +53,14 @@ export function mapLink(row: LinkRow) {
     title: row.title,
     url: row.url,
     icon: row.icon,
+    iconMode: row.icon_mode,
+    iconImageUrl: row.icon_image_url,
+    iconText: row.icon_text,
     description: row.description,
     tileSize: row.tile_size,
+    openMode: row.open_mode,
+    backgroundColor: row.background_color,
     sortOrder: row.sort_order,
-    pinned: Boolean(row.pinned),
-    archived: Boolean(row.archived),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -46,6 +76,9 @@ export function mapSettings(row: SettingsRow) {
     weatherEnabled: Boolean(row.weather_enabled),
     weatherAutoLocate: Boolean(row.weather_auto_locate),
     temperatureUnit: row.temperature_unit,
+    wallpaperUrl: row.wallpaper_url,
+    wallpaperOverlayOpacity: row.wallpaper_overlay_opacity,
+    wallpaperBlur: row.wallpaper_blur,
     updatedAt: row.updated_at,
   }
 }
@@ -56,7 +89,7 @@ export async function listGroups(env: Env) {
 }
 
 export async function listLinks(env: Env) {
-  const { results } = await env.DB.prepare('SELECT * FROM links ORDER BY pinned DESC, sort_order ASC, created_at ASC').all<LinkRow>()
+  const { results } = await env.DB.prepare('SELECT * FROM links ORDER BY sort_order ASC, created_at ASC').all<LinkRow>()
   return results.map(mapLink)
 }
 
@@ -68,7 +101,13 @@ export async function getSettings(env: Env) {
   return mapSettings(row)
 }
 
-export async function getBootstrap(env: Env) {
+export async function getBootstrap(env: Env, user?: User) {
   const [groups, links, settings] = await Promise.all([listGroups(env), listLinks(env), getSettings(env)])
-  return { groups, links, settings }
+
+  if (!user) {
+    return { groups, links, settings }
+  }
+
+  const profile = await getUserProfile(env, user.subject)
+  return { user: applyUserProfile(user, profile), groups, links, settings }
 }

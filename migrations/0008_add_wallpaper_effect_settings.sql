@@ -1,0 +1,2 @@
+ALTER TABLE settings ADD COLUMN wallpaper_overlay_opacity INTEGER NOT NULL DEFAULT 78;
+ALTER TABLE settings ADD COLUMN wallpaper_blur INTEGER NOT NULL DEFAULT 0;

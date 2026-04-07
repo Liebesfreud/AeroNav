@@ -61,6 +61,7 @@ function getLocalDevUser(request: Request): User | null {
     email: 'dev@local.aeronav',
     subject: 'local-dev-user',
     name: 'Local Dev',
+    displayName: 'Local Dev',
   }
 }
 
@@ -78,6 +79,7 @@ export function getAccessUser(request: Request): User | null {
     email,
     subject,
     name: preferred?.name ?? null,
+    displayName: preferred?.name ?? null,
   }
 }
 
@@ -116,10 +118,29 @@ export function unauthorizedHtml(appName = 'AeroNav') {
 
 export async function ensureSettings(env: Env) {
   await env.DB.prepare(
-    `INSERT INTO settings (id, theme_mode, card_density, open_in_new_tab, show_group_icons, search_engine, weather_enabled, weather_auto_locate, temperature_unit, updated_at)
-     VALUES (1, 'system', 'comfortable', 1, 1, 'bing', 1, 0, 'system', ?)
-     ON CONFLICT(id) DO NOTHING`,
-  )
-    .bind(new Date().toISOString())
-    .run()
+    `CREATE TABLE IF NOT EXISTS user_profiles (
+      subject TEXT PRIMARY KEY,
+      display_name TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`,
+  ).run()
+
+  try {
+    await env.DB.prepare(
+      `INSERT INTO settings (id, theme_mode, card_density, open_in_new_tab, show_group_icons, search_engine, weather_enabled, weather_auto_locate, temperature_unit, wallpaper_url, wallpaper_overlay_opacity, wallpaper_blur, updated_at)
+       VALUES (1, 'system', 'comfortable', 1, 1, 'bing', 1, 0, 'system', NULL, 78, 0, ?)
+       ON CONFLICT(id) DO NOTHING`,
+    )
+      .bind(new Date().toISOString())
+      .run()
+  } catch {
+    await env.DB.prepare(
+      `INSERT INTO settings (id, theme_mode, card_density, open_in_new_tab, show_group_icons, search_engine, weather_enabled, weather_auto_locate, temperature_unit, updated_at)
+       VALUES (1, 'system', 'comfortable', 1, 1, 'bing', 1, 0, 'system', ?)
+       ON CONFLICT(id) DO NOTHING`,
+    )
+      .bind(new Date().toISOString())
+      .run()
+  }
 }

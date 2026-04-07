@@ -10,16 +10,20 @@ export function Button({
   children: ReactNode
 }) {
   const styles = {
-    primary: 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200',
-    secondary: 'bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-50 dark:ring-slate-800 dark:hover:bg-slate-800',
-    ghost: 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900',
-    danger: 'bg-red-600 text-white hover:bg-red-500',
+    primary:
+      'border border-transparent bg-on-background text-white hover:bg-[#1f2422] dark:bg-dark-on-background dark:text-dark-background dark:hover:bg-[#dfe5df]',
+    secondary:
+      'border border-transparent bg-surface-container-low text-on-background hover:bg-surface-container dark:bg-dark-surface-container/80 dark:text-dark-on-background dark:hover:bg-dark-surface-container',
+    ghost:
+      'border border-transparent bg-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/70 dark:hover:text-dark-on-background',
+    danger:
+      'border border-transparent bg-red-600 text-white hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-400',
   }
 
   return (
     <button
       {...props}
-      className={`inline-flex min-h-11 items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${styles[variant]} ${className}`}
+      className={`inline-flex min-h-10 items-center justify-center rounded-xl px-3.5 py-2 text-sm font-medium transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${styles[variant]} ${className}`}
     >
       {children}
     </button>

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { Env, GroupRow } from '../db/schema'
+import type { Env, GroupRow, User } from '../db/schema'
 import { ApiError, jsonSuccess } from '../auth/access'
 import { createId, getBootstrap, listGroups, mapGroup, nowIso } from '../db/repo'
 
@@ -58,7 +58,7 @@ export async function updateGroup(request: Request, env: Env, id: string) {
   return jsonSuccess({ group: mapGroup(updated), groups: await listGroups(env) })
 }
 
-export async function deleteGroup(env: Env, id: string) {
+export async function deleteGroup(env: Env, user: User, id: string) {
   const existing = await env.DB.prepare('SELECT id FROM groups WHERE id = ?').bind(id).first<{ id: string }>()
   if (!existing) throw new ApiError(404, 'GROUP_NOT_FOUND', 'Group not found')
 
@@ -66,5 +66,5 @@ export async function deleteGroup(env: Env, id: string) {
   if ((linked?.count ?? 0) > 0) throw new ApiError(409, 'GROUP_NOT_EMPTY', 'Please move or delete links in this group first')
 
   await env.DB.prepare('DELETE FROM groups WHERE id = ?').bind(id).run()
-  return jsonSuccess(await getBootstrap(env))
+  return jsonSuccess(await getBootstrap(env, user))
 }

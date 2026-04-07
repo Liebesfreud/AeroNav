@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import { Select } from '../../components/Select'
 
 function SearchEngineLogo({ searchEngine }: { searchEngine: 'google' | 'bing' }) {
   if (searchEngine === 'google') {
@@ -42,19 +43,22 @@ export const NavigationSearch = forwardRef<HTMLInputElement, {
   onSearchWeb: () => void
 }>(function NavigationSearch({ value, searchEngine, onChange, onSearchEngineChange, onSearchWeb }, ref) {
   return (
-    <div className="mx-auto w-full max-w-3xl">
+    <div className="mx-auto w-full max-w-[60rem]">
       <div className="flex items-center rounded-2xl border border-outline/70 bg-surface/85 px-2.5 py-1.5 shadow-[0_8px_24px_-22px_rgba(0,0,0,0.45)] transition-all duration-300 focus-within:border-[#99462a]/20 focus-within:ring-2 focus-within:ring-[#99462a]/10 sm:px-3 dark:border-dark-outline/80 dark:bg-dark-surface-elevated/90 dark:shadow-[0_12px_28px_-20px_rgba(0,0,0,0.8)]">
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-surface-container-low px-3 py-1.5 text-on-surface-variant dark:bg-dark-surface-container dark:text-dark-on-surface-variant">
           <SearchEngineLogo searchEngine={searchEngine} />
-          <select
+          <Select
             value={searchEngine}
-            onChange={(event) => onSearchEngineChange(event.target.value as 'google' | 'bing')}
-            className="appearance-none bg-transparent p-0 pr-2 font-label text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant outline-none focus:ring-0 dark:text-dark-on-surface-variant"
-            aria-label="选择搜索引擎"
-          >
-            <option value="bing">必应</option>
-            <option value="google">谷歌</option>
-          </select>
+            onValueChange={onSearchEngineChange}
+            options={[
+              { value: 'bing', label: '必应' },
+              { value: 'google', label: '谷歌' },
+            ]}
+            variant="inline"
+            ariaLabel="选择搜索引擎"
+            triggerClassName="min-w-[3.5rem]"
+            contentClassName="min-w-[7rem]"
+          />
         </div>
         <input
           ref={ref}

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { Env } from '../db/schema'
+import type { Env, User } from '../db/schema'
 import { ApiError, jsonSuccess } from '../auth/access'
 import { getBootstrap } from '../db/repo'
 
@@ -8,7 +8,7 @@ const reorderSchema = z.object({
   links: z.array(z.object({ id: z.string(), groupId: z.string(), sortOrder: z.number().int().nonnegative() })),
 })
 
-export async function reorderEntities(request: Request, env: Env) {
+export async function reorderEntities(request: Request, env: Env, user: User) {
   const parsed = reorderSchema.safeParse(await request.json())
   if (!parsed.success) throw new ApiError(400, 'INVALID_REORDER', 'Invalid reorder payload', parsed.error.flatten())
 
@@ -23,5 +23,5 @@ export async function reorderEntities(request: Request, env: Env) {
     await env.DB.batch(statements)
   }
 
-  return jsonSuccess(await getBootstrap(env))
+  return jsonSuccess(await getBootstrap(env, user))
 }

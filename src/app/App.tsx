@@ -10,6 +10,7 @@ export function App() {
   const { data } = useBootstrapQuery()
   const { update } = useBootstrapCache()
   const [editMode, setEditMode] = useState(false)
+  const [sidebarVisible, setSidebarVisible] = useState(false)
 
   useEffect(() => {
     if (data) applyTheme(data.settings.themeMode)
@@ -32,9 +33,14 @@ export function App() {
   return (
     <Layout
       themeMode={data?.settings.themeMode}
+      wallpaperUrl={data?.settings.wallpaperUrl}
+      wallpaperOverlayOpacity={data?.settings.wallpaperOverlayOpacity}
+      wallpaperBlur={data?.settings.wallpaperBlur}
       onToggleTheme={handleToggleTheme}
       editMode={editMode}
       onToggleEditMode={() => setEditMode((current) => !current)}
+      sidebarVisible={sidebarVisible}
+      onToggleSidebar={() => setSidebarVisible((current) => !current)}
     >
       <Outlet context={{ editMode }} />
     </Layout>

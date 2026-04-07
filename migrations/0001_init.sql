@@ -15,8 +15,6 @@ CREATE TABLE IF NOT EXISTS links (
   icon TEXT,
   description TEXT,
   sort_order INTEGER NOT NULL,
-  pinned INTEGER NOT NULL DEFAULT 0,
-  archived INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   FOREIGN KEY (group_id) REFERENCES groups(id)
@@ -33,8 +31,6 @@ CREATE TABLE IF NOT EXISTS settings (
 
 CREATE INDEX IF NOT EXISTS idx_groups_sort_order ON groups(sort_order);
 CREATE INDEX IF NOT EXISTS idx_links_group_sort ON links(group_id, sort_order);
-CREATE INDEX IF NOT EXISTS idx_links_pinned ON links(pinned);
-CREATE INDEX IF NOT EXISTS idx_links_archived ON links(archived);
 
 INSERT INTO settings (id, theme_mode, card_density, open_in_new_tab, show_group_icons, updated_at)
 VALUES (1, 'system', 'comfortable', 1, 1, CURRENT_TIMESTAMP)

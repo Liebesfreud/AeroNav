@@ -11,7 +11,19 @@ import { CreateLinkDrawer, type LinkDraft } from './CreateLinkDrawer'
 import { DeleteLinkDialog } from './DeleteLinkDialog'
 import { GroupDrawer, type GroupDraft } from './GroupDrawer'
 
-const emptyLinkDraft: LinkDraft = { title: '', url: '', icon: '', description: '', tileSize: '1x2', groupId: '', pinned: false, archived: false }
+const emptyLinkDraft: LinkDraft = {
+  title: '',
+  url: '',
+  icon: '',
+  iconMode: 'favicon',
+  iconImageUrl: '',
+  iconText: '',
+  description: '',
+  tileSize: '1x3',
+  groupId: '',
+  openMode: 'global',
+  backgroundColor: '',
+}
 const emptyGroupDraft: GroupDraft = { name: '', icon: '' }
 
 const searchEngineBaseUrl = {
@@ -56,11 +68,14 @@ function mapLinkToDraft(link: LinkItem): LinkDraft {
     title: link.title,
     url: link.url,
     icon: link.icon ?? '',
+    iconMode: link.iconMode,
+    iconImageUrl: link.iconImageUrl ?? '',
+    iconText: link.iconText ?? '',
     description: link.description ?? '',
     tileSize: link.tileSize,
     groupId: link.groupId,
-    pinned: link.pinned,
-    archived: link.archived,
+    openMode: link.openMode,
+    backgroundColor: link.backgroundColor ?? '',
   }
 }
 
@@ -131,7 +146,7 @@ export function NavigationPage() {
   const dateText = dateFormatter.format(now)
 
   const visibleLinks = useMemo(() => {
-    if (!query) return links.filter((link) => !link.archived)
+    if (!query) return links
     return links.filter((link) => [link.title, link.url, link.description ?? ''].some((value) => value.toLowerCase().includes(query)))
   }, [links, query])
 
@@ -282,6 +297,11 @@ export function NavigationPage() {
     setLinkDrawerOpen(true)
   }
 
+  const openDeleteLink = (linkId: string, title: string) => {
+    setLinkDrawerOpen(false)
+    setDeleteState({ type: 'link', id: linkId, title })
+  }
+
   const submitGroup = () => {
     const payload: GroupCreatePayload = {
       name: groupDraft.name.trim(),
@@ -296,11 +316,14 @@ export function NavigationPage() {
       title: linkDraft.title.trim(),
       url: linkDraft.url.trim(),
       icon: linkDraft.icon.trim() || null,
+      iconMode: linkDraft.iconMode,
+      iconImageUrl: linkDraft.iconImageUrl.trim() || null,
+      iconText: linkDraft.iconText.trim() || null,
       description: linkDraft.description.trim() || null,
       tileSize: linkDraft.tileSize,
       groupId: linkDraft.groupId || groups[0]?.id || '',
-      pinned: linkDraft.pinned,
-      archived: linkDraft.archived,
+      openMode: linkDraft.openMode,
+      backgroundColor: linkDraft.backgroundColor.trim() || null,
     }
     if (!payload.title || !payload.url || !payload.groupId) return
     saveLinkMutation.mutate(payload)
@@ -313,16 +336,23 @@ export function NavigationPage() {
     reorderMutation.mutate(buildReorderPayload(nextGroups, links))
   }
 
-  const moveLink = (link: LinkItem, direction: -1 | 1) => {
-    const groupLinks = links.filter((item) => item.groupId === link.groupId)
-    const index = groupLinks.findIndex((item) => item.id === link.id)
-    if (index === -1) return
-    const movedGroupLinks = moveItem(groupLinks, index, direction).map((item, movedIndex) => ({
-      ...item,
-      sortOrder: movedIndex,
-    }))
-    const otherLinks = links.filter((item) => item.groupId !== link.groupId)
-    reorderMutation.mutate(buildReorderPayload(groups, [...otherLinks, ...movedGroupLinks]))
+  const reorderLinksInGroup = (groupId: string, orderedLinkIds: string[]) => {
+    const groupLinks = links.filter((item) => item.groupId === groupId)
+    if (groupLinks.length <= 1 || groupLinks.length !== orderedLinkIds.length) return
+
+    const linkMap = new Map(groupLinks.map((item) => [item.id, item]))
+    const reorderedGroupLinks = orderedLinkIds
+      .map((id) => linkMap.get(id))
+      .filter((item): item is LinkItem => Boolean(item))
+      .map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }))
+
+    if (reorderedGroupLinks.length !== groupLinks.length) return
+
+    const otherLinks = links.filter((item) => item.groupId !== groupId)
+    reorderMutation.mutate(buildReorderPayload(groups, [...otherLinks, ...reorderedGroupLinks]))
   }
 
   const handleSearchWeb = () => {
@@ -339,24 +369,26 @@ export function NavigationPage() {
     updateSettingsMutation.mutate({ searchEngine: next })
   }
 
-  if (isLoading) return <div className="mt-32 flex h-full w-full items-center justify-center font-label text-xl tracking-widest text-on-surface-variant">正在加载 ETHOS...</div>
+  if (isLoading) return <div className="mt-32 flex h-full w-full items-center justify-center font-label text-xl tracking-widest text-on-surface-variant">正在加载 AeroNav...</div>
 
   return (
     <>
       <PageContainer className="pb-4 pt-5 lg:pb-5 lg:pt-6">
         <div className="space-y-4 lg:space-y-5">
-          <NavigationHero timeText={timeText} dateText={dateText} weather={weatherState} />
-          <NavigationSearch
-            ref={searchRef}
-            value={search}
-            searchEngine={searchEngine}
-            onChange={setSearch}
-            onSearchEngineChange={handleSearchEngineChange}
-            onSearchWeb={handleSearchWeb}
-          />
+          <div className="space-y-4">
+            <NavigationHero timeText={timeText} dateText={dateText} weather={weatherState} />
+            <NavigationSearch
+              ref={searchRef}
+              value={search}
+              searchEngine={searchEngine}
+              onChange={setSearch}
+              onSearchEngineChange={handleSearchEngineChange}
+              onSearchWeb={handleSearchWeb}
+            />
+          </div>
           {!hasSearchResults && query ? (
-            <div className="rounded-3xl border border-dashed border-outline/70 bg-surface/75 px-5 py-8 text-center text-sm text-on-surface-variant dark:border-dark-outline/80 dark:bg-dark-surface-elevated/80 dark:text-dark-on-surface-variant">
-              没找到匹配的链接。按回车可直接搜索互联网。
+            <div className="rounded-[1.5rem] border border-dashed border-outline/70 bg-surface/70 px-5 py-6 text-sm text-on-surface-variant dark:border-dark-outline/80 dark:bg-dark-surface-elevated/76 dark:text-dark-on-surface-variant">
+              没找到匹配的链接。按回车或点击搜索可直接搜索互联网。
             </div>
           ) : null}
           {reorderMutation.error ? <p className="text-sm text-red-500">{getErrorMessage(reorderMutation.error, '排序失败，请稍后重试。')}</p> : null}
@@ -374,8 +406,7 @@ export function NavigationPage() {
         onMoveGroup={moveGroup}
         onCreateLink={openCreateLink}
         onEditLink={openEditLink}
-        onDeleteLink={(link) => setDeleteState({ type: 'link', id: link.id, title: link.title })}
-        onMoveLink={moveLink}
+        onReorderLinks={reorderLinksInGroup}
       />
       <CreateLinkDrawer
         open={linkDrawerOpen && editMode}
@@ -390,9 +421,9 @@ export function NavigationPage() {
         draft={linkDraft}
         groups={groups}
         pending={saveLinkMutation.isPending}
-        errorMessage={saveLinkMutation.error ? getErrorMessage(saveLinkMutation.error, '保存链接失败。') : null}
         onDraftChange={(next) => setLinkDraft((current) => typeof next === 'function' ? next(current) : next)}
         onSubmit={submitLink}
+        onDelete={editingLinkId ? () => openDeleteLink(editingLinkId, linkDraft.title.trim() || '未命名链接') : undefined}
       />
       <GroupDrawer
         open={groupDrawerOpen && editMode}
@@ -420,8 +451,8 @@ export function NavigationPage() {
         onCancel={() => setDeleteState(null)}
         onConfirm={() => deleteState && deleteMutation.mutate(deleteState)}
       />
-      <div className="pointer-events-none fixed bottom-10 right-12 z-10 flex flex-col items-end gap-1 opacity-20 transition-opacity hover:opacity-100">
-        <p className="font-label text-[9px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">ETHOS Core v2.4.0</p>
+      <div className="pointer-events-none fixed bottom-8 right-10 z-10 flex flex-col items-end gap-1 opacity-20 transition-opacity hover:opacity-100">
+        <p className="font-label text-[9px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">AeroNav</p>
       </div>
     </>
   )

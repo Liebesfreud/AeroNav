@@ -5,48 +5,72 @@
 :root {
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #0f172a;
-  --app-bg: #F9F8F6;
-  --app-text: #2F3331;
-  --app-surface: #FFFFFF;
-  --app-surface-low: #FAF9F7;
-  --app-surface-container: #F3F4F1;
-  --app-surface-elevated: rgba(255, 255, 255, 0.78);
-  --app-border: rgba(17, 24, 39, 0.08);
-  --app-border-strong: rgba(17, 24, 39, 0.14);
-  --app-text-muted: rgba(47, 51, 49, 0.6);
-  --app-text-subtle: rgba(47, 51, 49, 0.42);
-  --app-hover: rgba(153, 70, 42, 0.06);
-  --app-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --app-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --app-soft-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.04);
+  color: #36312D;
+  --app-bg: #EBE4D5;
+  --app-text: #36312D;
+  --app-surface: #F4EFE6;
+  --app-surface-low: #E6E0CF;
+  --app-surface-container: #E0D7C4;
+  --app-surface-elevated: #FFFFFF;
+  --app-border: #D6D1C1;
+  --app-border-strong: #C4BCA8;
+  --app-text-muted: rgba(54, 49, 45, 0.7);
+  --app-text-subtle: rgba(54, 49, 45, 0.45);
+  --app-hover: rgba(54, 49, 45, 0.05);
+  --app-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.06);
+  --app-shadow-hover: 0 8px 24px -6px rgba(0, 0, 0, 0.08);
+  --app-soft-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.08);
 }
 
 :root.dark {
   color-scheme: dark;
-  color: #f8fafc;
-  --app-bg: #111315;
-  --app-text: #F5F7F5;
-  --app-surface: #171A1D;
-  --app-surface-low: #1A1E22;
-  --app-surface-container: #22272B;
-  --app-surface-elevated: rgba(31, 35, 40, 0.82);
-  --app-border: rgba(161, 168, 164, 0.16);
-  --app-border-strong: rgba(161, 168, 164, 0.26);
-  --app-text-muted: rgba(245, 247, 245, 0.68);
-  --app-text-subtle: rgba(245, 247, 245, 0.45);
-  --app-hover: rgba(217, 119, 87, 0.14);
-  --app-shadow: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.22);
-  --app-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.32);
-  --app-soft-shadow: 0 10px 32px -10px rgba(0, 0, 0, 0.55);
+  color: #E2DFD8;
+  --app-bg: #181716;
+  --app-text: #E2DFD8;
+  --app-surface: #252422;
+  --app-surface-low: #1E1C1B;
+  --app-surface-container: #131110;
+  --app-surface-elevated: #302E2C;
+  --app-border: #383633;
+  --app-border-strong: #4A4642;
+  --app-text-muted: rgba(226, 223, 216, 0.7);
+  --app-text-subtle: rgba(226, 223, 216, 0.45);
+  --app-hover: rgba(255, 255, 255, 0.05);
+  --app-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.25);
+  --app-shadow-hover: 0 8px 24px -6px rgba(0, 0, 0, 0.35);
+  --app-soft-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.35);
 }
 
 body {
+  margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: var(--app-bg);
   color: var(--app-text);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.app-wallpaper {
+  position: fixed;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: blur(var(--wallpaper-blur, 0px));
+  transform: scale(calc(1 + (var(--wallpaper-blur, 0px) / 120)));
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.app-wallpaper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(235, 228, 213, var(--wallpaper-overlay-opacity, 0.78));
+  pointer-events: none;
+}
+
+:root.dark .app-wallpaper-overlay {
+  background: rgba(24, 23, 22, var(--wallpaper-overlay-opacity, 0.78));
 }
 
 .material-symbols-outlined {
@@ -61,7 +85,7 @@ body {
 
 .paper-card:hover {
   box-shadow: var(--app-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -97,5 +121,37 @@ html,
 body,
 #root {
   min-height: 100%;
+}
+
+.nav-link-grid {
+  --nav-columns: 6;
+  --nav-gap: 0.75rem;
+  container-type: inline-size;
+  grid-template-columns: repeat(var(--nav-columns), minmax(0, 1fr));
+  grid-auto-rows: 4.75rem;
+}
+
+@media (min-width: 640px) {
+  .nav-link-grid {
+    --nav-columns: 9;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-link-grid {
+    --nav-columns: 12;
+  }
+}
+
+@media (min-width: 1280px) {
+  .nav-link-grid {
+    --nav-columns: 18;
+  }
+}
+
+@media (min-width: 1536px) {
+  .nav-link-grid {
+    --nav-columns: 21;
+  }
 }
 

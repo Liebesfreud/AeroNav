@@ -1,235 +1,267 @@
+import { Button } from '../../components/Button'
+import { PageContainer } from '../../components/layout/PageContainer'
+
+type BookmarkCardProps = {
+  icon: string
+  title: string
+  description: string
+  domain: string
+}
+
+type BookmarkRowProps = {
+  icon: string
+  title: string
+  detail: string
+}
+
+type BookmarkMediaCardProps = {
+  title: string
+  description: string
+  domain: string
+  imageUrl: string
+}
+
+type BookmarkShortcutProps = {
+  icon: string
+  title: string
+  category: string
+}
+
+const designTools: BookmarkCardProps[] = [
+  {
+    icon: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBZ7fJo-unr1tzwhbAlzQhhPmZzsbzdtnS_CVzi7zV4HU9dOEeTVha2AUaLyEib2dHyJ01xmiZRaOYymbYpp_apU0pRwhbXqv7tE6Y_s8yFHLrzmsx4-1OSRAq6fLpmNgGU5od9L9QTgUpFTT6sB96o8Av8apZNLvWclgW5mltqTD58pD0tT0PIYU6ve7VtiSVaEXa3UkUeAy1CJnK52bimXwQ0uSLOweAbYC8uslS23CKNFBSSxijp7HpUEOWloTxJX5asGflsHIo',
+    title: 'Figma Dashboard',
+    description: 'Collaborative interface design tool for teams and designers.',
+    domain: 'FIGMA.COM',
+  },
+  {
+    icon: 'https://lh3.googleusercontent.com/aida-public/AB6AXuClKK2A2wOfty9bwT7R4Xz-rm39Hx2LFaSNgeZP29kJAbjqkEMtit_Sjw3o6GUm01jrKtnv-M9wBzOWZa9iNpE9kPkw-kOd43JykVpPiSKyMrZYp_4mYkn7i9aYH4b4GmLZ5mS5zfeBnt8Fc7kHLJTpIvZFuML7X77JX328YYXQUE33RzGMf48TfwpkvAr0B2gGwNxxD9syvkH9pwvJPM_-rZJWsCYM-WM7giQPUJK7235tkxQL2Qn08CKKOXVl0Fc65yNFxo-eWuE',
+    title: 'Framer Sites',
+    description: 'Next-generation site builder for production-ready design.',
+    domain: 'FRAMER.COM',
+  },
+]
+
+const workBookmarks: BookmarkRowProps[] = [
+  { icon: 'mail', title: 'Gmail Inbox', detail: '24 unread messages' },
+  { icon: 'terminal', title: 'GitHub Repos', detail: 'Updated 2h ago' },
+  { icon: 'calendar_today', title: 'Calendar', detail: '3 upcoming meetings' },
+]
+
+const learningBookmarks: BookmarkMediaCardProps[] = [
+  {
+    title: 'MDN Web Docs',
+    description: 'Web developer resources.',
+    domain: 'DEVELOPER.MOZILLA.ORG',
+    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD-N5N0UhbfC8QEN0OIdvqaxpkC3Nolx7oX060zS2viphIGQ2OfqKZwrQnWIKkjjfKyTswE-_jnojhzmpgFGpRuHjJKRguwt-n6y2E3ZJs5shBB2hApb3jka2WrJNKXfVIpW7Ih8I27cQdTY-M7BIs6QTft17s7FYYoC_3RYutDNlCC-1aC1hnnf2m6i81Slb3tssrHOA_B91ZqfXpqaOZyncqMpb3gOUaeQoUPDUlv23S_YS7EPkF1fqPlKfd99fAECiiVjSFYQP0',
+  },
+  {
+    title: 'Frontend Masters',
+    description: 'Deep dive video courses.',
+    domain: 'FRONTENDMASTERS.COM',
+    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB2nXJU09ViY9gKpc3ukA5UfHCvyclNDiGe33aBw_CCuhZv2vRi6H3NL0gdDQ_6BozIYx7s9Wb2VHvNpDTXWxSITlcytGpR_EIGjsbZxhcCyHjeK50G2EJuQ2bvEgJASW6YmPkvx55lpQ95qh8tSWpTTjDK48g2aGXhn3xhSfPBzVo84OgpK4qUYy8f9o9BFojBRrbbmOOU7b4-DSP4h7dKixwDv_LaDLi6dBZ6gXtPPXP3YuNp1tzgchljHrGXFfuno73NPNvina4',
+  },
+  {
+    title: 'The CSS Podcast',
+    description: 'Modern CSS design tips.',
+    domain: 'PODCASTS.GOOGLE.COM',
+    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBOYhHfb1fdZ_84kmYK2tj9Iui4YHf02kyXGc-HY6QeRxNGaZoCdZPU_y12XjdBIE1zcIYblAdbJZeD0xqPUGM1wmt7IsOhiQ-Mkw1N1VbhLvJ44ZGLs5DxjSdYwOZBg6uPw1eels0AUqtANsrUSW9DZrU6eoC1UTy_J4gVuIDcXM-c-CNXnWkhwnXzhtr9boILo4SALRJjjYaeZdRhSUs-qLxqYseO55dptEugcgNx39zeXeS8bvLrcPPVEuNpjkopJ9gIeGe2QaY',
+  },
+]
+
+const entertainmentBookmarks: BookmarkShortcutProps[] = [
+  { icon: 'play_arrow', title: 'YouTube', category: 'Video' },
+  { icon: 'music_note', title: 'Spotify', category: 'Music' },
+  { icon: 'forum', title: 'Reddit', category: 'Social' },
+  { icon: 'movie', title: 'Netflix', category: 'Streaming' },
+]
+
+function SectionHeading({
+  icon,
+  title,
+  meta,
+  action,
+}: {
+  icon: string
+  title: string
+  meta?: string
+  action?: React.ReactNode
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-outline/50 pb-4 dark:border-dark-outline/60">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
+          <span className="material-symbols-outlined text-[20px]">{icon}</span>
+        </div>
+        <div>
+          <h2 className="font-headline text-2xl font-semibold tracking-tight text-on-background dark:text-dark-on-background">{title}</h2>
+          {meta ? <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-on-surface-variant dark:text-dark-on-surface-variant">{meta}</p> : null}
+        </div>
+      </div>
+      {action}
+    </div>
+  )
+}
+
+function BookmarkCard({ icon, title, description, domain }: BookmarkCardProps) {
+  return (
+    <div className="group relative flex flex-col rounded-xl border border-outline/45 bg-surface/68 p-5 transition hover:bg-surface/92 dark:border-dark-outline/55 dark:bg-dark-surface-elevated/72">
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-container dark:bg-dark-surface-container">
+          <img alt={title} className="h-8 w-8 object-contain grayscale transition-all group-hover:grayscale-0" src={icon} />
+        </div>
+        <button className="flex h-9 w-9 items-center justify-center rounded-xl text-on-surface-variant transition hover:bg-surface-container-low hover:text-primary dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/80 dark:hover:text-accent">
+          <span className="material-symbols-outlined text-lg">edit_note</span>
+        </button>
+      </div>
+      <h3 className="text-lg font-semibold text-on-surface transition-colors group-hover:text-primary dark:text-dark-on-surface dark:group-hover:text-accent">{title}</h3>
+      <p className="mt-2 flex-1 text-sm leading-6 text-on-surface-variant dark:text-dark-on-surface-variant">{description}</p>
+      <p className="mt-6 text-[11px] font-semibold tracking-[0.16em] text-on-surface-variant/80 dark:text-dark-on-surface-variant/80">{domain}</p>
+      <a className="absolute inset-0 rounded-xl" href="#" aria-label={title}></a>
+    </div>
+  )
+}
+
+function BookmarkRow({ icon, title, detail }: BookmarkRowProps) {
+  return (
+    <div className="group relative flex items-center gap-4 rounded-xl border border-transparent px-4 py-4 transition hover:bg-surface-container-low/80 dark:hover:bg-dark-surface-container/55">
+      <a className="absolute inset-0 rounded-xl" href="#" aria-label={title}></a>
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
+        <span className="material-symbols-outlined">{icon}</span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
+        <p className="mt-1 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">{detail}</p>
+      </div>
+      <span className="material-symbols-outlined text-sm text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">north_east</span>
+    </div>
+  )
+}
+
+function BookmarkMediaCard({ title, description, domain, imageUrl }: BookmarkMediaCardProps) {
+  return (
+    <div className="group relative min-w-[320px] overflow-hidden rounded-xl border border-outline/45 bg-surface/68 dark:border-dark-outline/55 dark:bg-dark-surface-elevated/72">
+      <a className="absolute inset-0 z-10 rounded-xl" href="#" aria-label={title}></a>
+      <div className="relative h-40 overflow-hidden bg-surface-container dark:bg-dark-surface-container">
+        <img className="h-full w-full object-cover opacity-60 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100" src={imageUrl} alt="" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent dark:from-dark-surface-elevated/90"></div>
+      </div>
+      <div className="p-6">
+        <h3 className="text-base font-semibold text-on-surface transition-colors group-hover:text-primary dark:text-dark-on-surface dark:group-hover:text-accent">{title}</h3>
+        <p className="mt-2 text-sm leading-6 text-on-surface-variant dark:text-dark-on-surface-variant">{description}</p>
+        <div className="mt-5 flex items-center justify-between">
+          <span className="text-[10px] font-semibold tracking-[0.16em] text-on-surface-variant/80 dark:text-dark-on-surface-variant/80">{domain}</span>
+          <span className="material-symbols-outlined text-base text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">arrow_forward</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BookmarkShortcut({ icon, title, category }: BookmarkShortcutProps) {
+  return (
+    <a href="#" className="group flex items-center gap-4 rounded-xl border border-outline/45 bg-surface/68 p-4 transition hover:bg-surface/92 dark:border-dark-outline/55 dark:bg-dark-surface-elevated/72">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-container-low text-primary transition-colors group-hover:bg-primary group-hover:text-white dark:bg-dark-surface-container/70 dark:text-accent dark:group-hover:bg-accent dark:group-hover:text-slate-950">
+        <span className="material-symbols-outlined text-lg">{icon}</span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
+        <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-on-surface-variant dark:text-dark-on-surface-variant">{category}</p>
+      </div>
+    </a>
+  )
+}
+
 export function BookmarksPage() {
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-      <header className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-        <div className="space-y-4">
-          <h1 className="text-5xl font-headline font-bold text-on-background tracking-tight dark:text-dark-on-background">Your Sanctuary</h1>
-          <p className="max-w-lg font-body text-lg leading-relaxed text-on-surface-variant dark:text-dark-on-surface-variant">A curated collection of digital spaces, organized with clarity and purpose.</p>
+    <PageContainer>
+      <div className="space-y-8 pb-24">
+        <header className="border-b border-outline/50 pb-6 dark:border-dark-outline/60">
+          <p className="font-label text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant dark:text-dark-on-surface-variant">AeroNav 收藏</p>
+          <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <h1 className="font-headline text-3xl font-semibold tracking-tight text-on-background dark:text-dark-on-background sm:text-[2.5rem]">收藏与灵感</h1>
+              <p className="mt-3 text-sm leading-7 text-on-surface-variant dark:text-dark-on-surface-variant sm:text-base">
+                将常用资源、学习内容和娱乐入口整理成清晰分区，而不是一页拼贴式模板。
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="secondary">
+                <span className="material-symbols-outlined mr-2 align-[-4px] text-[18px]">folder_open</span>
+                整理分组
+              </Button>
+              <Button>
+                <span className="material-symbols-outlined mr-2 align-[-4px] text-[18px]">add</span>
+                新建收藏
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.9fr)]">
+          <section className="space-y-6">
+            <SectionHeading icon="draw" title="设计工具" meta="4 项" />
+            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+              {designTools.map((bookmark) => (
+                <BookmarkCard key={bookmark.title} {...bookmark} />
+              ))}
+            </div>
+          </section>
+
+          <section className="space-y-6">
+            <SectionHeading icon="work" title="工作" meta="3 项" />
+            <div className="mt-6 space-y-2 rounded-xl bg-surface-container-low/70 p-2 dark:bg-dark-surface-container/55">
+              {workBookmarks.map((bookmark) => (
+                <BookmarkRow key={bookmark.title} {...bookmark} />
+              ))}
+            </div>
+            <div className="mt-6 rounded-xl bg-on-background px-6 py-7 text-white dark:bg-dark-surface dark:text-dark-on-background">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50 dark:text-dark-on-surface-variant">收藏总览</p>
+              <p className="mt-4 font-headline text-5xl font-semibold">142</p>
+              <p className="mt-3 text-sm leading-7 text-white/70 dark:text-dark-on-surface-variant">已整理为 8 个分区，本周新增内容较上周提升 12%。</p>
+            </div>
+          </section>
         </div>
-        <div className="flex flex-wrap gap-3 sm:gap-4">
-          <button className="flex items-center gap-2 rounded-lg border border-outline/50 bg-surface-container px-6 py-3 font-label font-semibold text-on-surface transition-all outline-none hover:bg-surface hover:shadow-sm dark:border-dark-outline/80 dark:bg-dark-surface-container dark:text-dark-on-surface dark:hover:bg-dark-surface-elevated">
-            <span className="material-symbols-outlined text-xs">folder_open</span>
-            Organize
-          </button>
-          <button className="flex items-center gap-2 rounded-lg bg-primary px-8 py-3 font-label font-bold text-white shadow-md shadow-[#99462a]/10 transition-all outline-none hover:opacity-90 active:scale-95 dark:bg-accent dark:text-slate-950 dark:shadow-none">
-            <span className="material-symbols-outlined text-sm">add</span>
-            Add Bookmark
-          </button>
-        </div>
-      </header>
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-        <section className="flex flex-col gap-8 lg:col-span-8">
-          <div className="flex items-center justify-between border-b border-outline pb-4 dark:border-dark-outline/80">
-            <h2 className="flex items-center gap-2 text-xl font-headline font-bold text-on-background dark:text-dark-on-background">
-              <span className="h-2 w-2 rounded-full bg-primary dark:bg-accent"></span>
-              Design Tools
-            </h2>
-            <span className="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">4 items</span>
-          </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <div className="group paper-card relative flex flex-col rounded-lg p-8 ring-1 ring-outline/30 dark:ring-dark-outline/70">
-              <div className="mb-8 flex items-start justify-between">
-                <div className="flex h-10 w-10 items-center justify-center grayscale transition-all group-hover:grayscale-0">
-                  <img alt="Figma" className="h-full w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ7fJo-unr1tzwhbAlzQhhPmZzsbzdtnS_CVzi7zV4HU9dOEeTVha2AUaLyEib2dHyJ01xmiZRaOYymbYpp_apU0pRwhbXqv7tE6Y_s8yFHLrzmsx4-1OSRAq6fLpmNgGU5od9L9QTgUpFTT6sB96o8Av8apZNLvWclgW5mltqTD58pD0tT0PIYU6ve7VtiSVaEXa3UkUeAy1CJnK52bimXwQ0uSLOweAbYC8uslS23CKNFBSSxijp7HpUEOWloTxJX5asGflsHIo" />
-                </div>
-                <div className="z-10 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button className="rounded p-1.5 text-on-surface-variant hover:bg-surface-container hover:text-primary dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-accent">
-                    <span className="material-symbols-outlined text-lg">edit_note</span>
-                  </button>
-                </div>
+        <section className="space-y-6 border-t border-outline/40 pt-6 dark:border-dark-outline/50">
+          <SectionHeading
+            icon="school"
+            title="学习与研究"
+            action={
+              <div className="flex gap-2">
+                <button className="flex h-10 w-10 items-center justify-center rounded-2xl border border-outline/70 bg-surface-container-low text-on-surface-variant transition hover:bg-surface-container hover:text-on-surface dark:border-dark-outline/70 dark:bg-dark-surface-container/60 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-dark-on-surface">
+                  <span className="material-symbols-outlined text-sm">chevron_left</span>
+                </button>
+                <button className="flex h-10 w-10 items-center justify-center rounded-2xl border border-outline/70 bg-surface-container-low text-on-surface-variant transition hover:bg-surface-container hover:text-on-surface dark:border-dark-outline/70 dark:bg-dark-surface-container/60 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-dark-on-surface">
+                  <span className="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
               </div>
-              <h3 className="pointer-events-none relative z-10 mb-2 w-fit text-lg font-headline font-bold transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">Figma Dashboard</h3>
-              <p className="mb-6 flex-1 font-body text-sm leading-relaxed text-on-surface-variant dark:text-dark-on-surface-variant">Collaborative interface design tool for teams and designers.</p>
-              <div className="mt-auto flex items-center gap-2">
-                <span className="text-[10px] font-bold font-mono tracking-tight text-on-surface-variant/60 dark:text-dark-on-surface-variant/70">FIGMA.COM</span>
-              </div>
-              <a className="absolute inset-0 z-0" href="#"></a>
-            </div>
-
-            <div className="group paper-card relative flex flex-col rounded-lg p-8 ring-1 ring-outline/30 dark:ring-dark-outline/70">
-              <div className="mb-8 flex items-start justify-between">
-                <div className="flex h-10 w-10 items-center justify-center grayscale transition-all group-hover:grayscale-0">
-                  <img alt="Framer" className="h-full w-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClKK2A2wOfty9bwT7R4Xz-rm39Hx2LFaSNgeZP29kJAbjqkEMtit_Sjw3o6GUm01jrKtnv-M9wBzOWZa9iNpE9kPkw-kOd43JykVpPiSKyMrZYp_4mYkn7i9aYH4b4GmLZ5mS5zfeBnt8Fc7kHLJTpIvZFuML7X77JX328YYXQUE33RzGMf48TfwpkvAr0B2gGwNxxD9syvkH9pwvJPM_-rZJWsCYM-WM7giQPUJK7235tkxQL2Qn08CKKOXVl0Fc65yNFxo-eWuE" />
-                </div>
-                <div className="z-10 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button className="rounded p-1.5 text-on-surface-variant hover:bg-surface-container hover:text-primary dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-accent">
-                    <span className="material-symbols-outlined text-lg">edit_note</span>
-                  </button>
-                </div>
-              </div>
-              <h3 className="pointer-events-none relative z-10 mb-2 w-fit text-lg font-headline font-bold transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">Framer Sites</h3>
-              <p className="mb-6 flex-1 font-body text-sm leading-relaxed text-on-surface-variant dark:text-dark-on-surface-variant">Next-generation site builder for production-ready design.</p>
-              <div className="mt-auto flex items-center gap-2">
-                <span className="text-[10px] font-bold font-mono tracking-tight text-on-surface-variant/60 dark:text-dark-on-surface-variant/70">FRAMER.COM</span>
-              </div>
-              <a className="absolute inset-0 z-0" href="#"></a>
-            </div>
+            }
+          />
+          <div className="mt-6 flex gap-6 overflow-x-auto pb-2">
+            {learningBookmarks.map((bookmark) => (
+              <BookmarkMediaCard key={bookmark.title} {...bookmark} />
+            ))}
           </div>
         </section>
 
-        <section className="flex flex-col gap-8 lg:col-span-4">
-          <div className="flex items-center justify-between border-b border-outline pb-4 dark:border-dark-outline/80">
-            <h2 className="text-xl font-headline font-bold text-on-background dark:text-dark-on-background">Work</h2>
-            <span className="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">3 items</span>
-          </div>
-          <div className="paper-card relative z-10 flex flex-col rounded-lg p-2 ring-1 ring-outline/30 dark:ring-dark-outline/70">
-            <div className="group relative flex cursor-pointer items-center gap-4 rounded border-b border-dashed border-outline p-4 transition-all last:border-0 hover:bg-surface-container/60 dark:border-dark-outline/70 dark:hover:bg-dark-surface-container/60">
-              <a className="absolute inset-0 z-10" href="#"></a>
-              <div className="flex h-8 w-8 items-center justify-center text-primary dark:text-accent">
-                <span className="material-symbols-outlined">mail</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-on-background dark:text-dark-on-background">Gmail Inbox</p>
-                <p className="text-[11px] text-on-surface-variant dark:text-dark-on-surface-variant">24 unread messages</p>
-              </div>
-              <span className="material-symbols-outlined text-xs text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">north_east</span>
-            </div>
-
-            <div className="group relative flex cursor-pointer items-center gap-4 rounded border-b border-dashed border-outline p-4 transition-all last:border-0 hover:bg-surface-container/60 dark:border-dark-outline/70 dark:hover:bg-dark-surface-container/60">
-              <a className="absolute inset-0 z-10" href="#"></a>
-              <div className="flex h-8 w-8 items-center justify-center text-primary dark:text-accent">
-                <span className="material-symbols-outlined">terminal</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-on-background dark:text-dark-on-background">GitHub Repos</p>
-                <p className="text-[11px] text-on-surface-variant dark:text-dark-on-surface-variant">Updated 2h ago</p>
-              </div>
-              <span className="material-symbols-outlined text-xs text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">north_east</span>
-            </div>
-
-            <div className="group relative flex cursor-pointer items-center gap-4 rounded border-b border-dashed border-outline p-4 transition-all last:border-0 hover:bg-surface-container/60 dark:border-dark-outline/70 dark:hover:bg-dark-surface-container/60">
-              <a className="absolute inset-0 z-10" href="#"></a>
-              <div className="flex h-8 w-8 items-center justify-center text-primary dark:text-accent">
-                <span className="material-symbols-outlined">calendar_today</span>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-on-background dark:text-dark-on-background">Calendar</p>
-                <p className="text-[11px] text-on-surface-variant dark:text-dark-on-surface-variant">3 upcoming meetings</p>
-              </div>
-              <span className="material-symbols-outlined text-xs text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">north_east</span>
-            </div>
-          </div>
-
-          <div className="relative z-10 rounded-lg bg-on-background p-8 text-white dark:bg-dark-surface-elevated dark:text-dark-on-background">
-            <p className="mb-4 font-label text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 dark:text-dark-on-surface-variant">Library Summary</p>
-            <p className="mb-4 text-5xl font-headline font-bold">142</p>
-            <p className="font-body text-sm leading-relaxed text-white/60 dark:text-dark-on-surface-variant">Organized across 8 catalogs. Your library grew by 12% this week.</p>
+        <section className="space-y-6 border-t border-outline/40 pt-6 dark:border-dark-outline/50">
+          <SectionHeading
+            icon="theaters"
+            title="娱乐"
+            action={<button className="text-sm font-semibold text-primary transition hover:opacity-70 dark:text-accent">浏览分类</button>}
+          />
+          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {entertainmentBookmarks.map((bookmark) => (
+              <BookmarkShortcut key={bookmark.title} {...bookmark} />
+            ))}
           </div>
         </section>
 
-        <section className="mt-12 flex flex-col gap-8 lg:col-span-12">
-          <div className="flex items-center justify-between border-b border-outline pb-4 dark:border-dark-outline/80">
-            <h2 className="text-xl font-headline font-bold text-on-background dark:text-dark-on-background">Learning & Research</h2>
-            <div className="relative z-10 flex gap-2">
-              <button className="flex h-8 w-8 cursor-pointer items-center justify-center rounded border border-outline transition-colors outline-none hover:bg-surface dark:border-dark-outline/80 dark:hover:bg-dark-surface-elevated">
-                <span className="material-symbols-outlined text-sm">chevron_left</span>
-              </button>
-              <button className="flex h-8 w-8 cursor-pointer items-center justify-center rounded border border-outline transition-colors outline-none hover:bg-surface dark:border-dark-outline/80 dark:hover:bg-dark-surface-elevated">
-                <span className="material-symbols-outlined text-sm">chevron_right</span>
-              </button>
-            </div>
-          </div>
-          <div className="scrollbar-hide flex gap-8 overflow-x-auto pb-6">
-            <div className="group relative min-w-[340px] overflow-hidden rounded-lg border border-outline/30 paper-card dark:border-dark-outline/70">
-              <a className="absolute inset-0 z-10" href="#"></a>
-              <div className="relative h-40 overflow-hidden bg-surface-container dark:bg-dark-surface-container">
-                <img className="h-full w-full object-cover opacity-50 grayscale transition-all duration-700 group-hover:opacity-100 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-N5N0UhbfC8QEN0OIdvqaxpkC3Nolx7oX060zS2viphIGQ2OfqKZwrQnWIKkjjfKyTswE-_jnojhzmpgFGpRuHjJKRguwt-n6y2E3ZJs5shBB2hApb3jka2WrJNKXfVIpW7Ih8I27cQdTY-M7BIs6QTft17s7FYYoC_3RYutDNlCC-1aC1hnnf2m6i81Slb3tssrHOA_B91ZqfXpqaOZyncqMpb3gOUaeQoUPDUlv23S_YS7EPkF1fqPlKfd99fAECiiVjSFYQP0" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/20 to-transparent dark:from-black/30"></div>
-              </div>
-              <div className="relative z-0 p-6">
-                <h3 className="mb-1 text-base font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">MDN Web Docs</h3>
-                <p className="mb-4 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">Web developer resources.</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-bold font-mono text-on-surface-variant/60 dark:text-dark-on-surface-variant/70">DEVELOPER.MOZILLA.ORG</span>
-                  <span className="material-symbols-outlined text-base text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">arrow_forward</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="group relative min-w-[340px] overflow-hidden rounded-lg border border-outline/30 paper-card dark:border-dark-outline/70">
-              <a className="absolute inset-0 z-10" href="#"></a>
-              <div className="relative h-40 overflow-hidden bg-surface-container dark:bg-dark-surface-container">
-                <img className="h-full w-full object-cover opacity-50 grayscale transition-all duration-700 group-hover:opacity-100 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2nXJU09ViY9gKpc3ukA5UfHCvyclNDiGe33aBw_CCuhZv2vRi6H3NL0gdDQ_6BozIYx7s9Wb2VHvNpDTXWxSITlcytGpR_EIGjsbZxhcCyHjeK50G2EJuQ2bvEgJASW6YmPkvx55lpQ95qh8tSWpTTjDK48g2aGXhn3xhSfPBzVo84OgpK4qUYy8f9o9BFojBRrbbmOOU7b4-DSP4h7dKixwDv_LaDLi6dBZ6gXtPPXP3YuNp1tzgchljHrGXFfuno73NPNvina4" />
-              </div>
-              <div className="relative z-0 p-6">
-                <h3 className="mb-1 text-base font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">Frontend Masters</h3>
-                <p className="mb-4 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">Deep dive video courses.</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-bold font-mono text-on-surface-variant/60 dark:text-dark-on-surface-variant/70">FRONTENDMASTERS.COM</span>
-                  <span className="material-symbols-outlined text-base text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">arrow_forward</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="group relative min-w-[340px] overflow-hidden rounded-lg border border-outline/30 paper-card dark:border-dark-outline/70">
-              <a className="absolute inset-0 z-10" href="#"></a>
-              <div className="relative h-40 overflow-hidden bg-surface-container dark:bg-dark-surface-container">
-                <img className="h-full w-full object-cover opacity-50 grayscale transition-all duration-700 group-hover:opacity-100 group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOYhHfb1fdZ_84kmYK2tj9Iui4YHf02kyXGc-HY6QeRxNGaZoCdZPU_y12XjdBIE1zcIYblAdbJZeD0xqPUGM1wmt7IsOhiQ-Mkw1N1VbhLvJ44ZGLs5DxjSdYwOZBg6uPw1eels0AUqtANsrUSW9DZrU6eoC1UTy_J4gVuIDcXM-c-CNXnWkhwnXzhtr9boILo4SALRJjjYaeZdRhSUs-qLxqYseO55dptEugcgNx39zeXeS8bvLrcPPVEuNpjkopJ9gIeGe2QaY" />
-              </div>
-              <div className="relative z-0 p-6">
-                <h3 className="mb-1 text-base font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">The CSS Podcast</h3>
-                <p className="mb-4 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">Modern CSS design tips.</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-bold font-mono text-on-surface-variant/60 dark:text-dark-on-surface-variant/70">PODCASTS.GOOGLE.COM</span>
-                  <span className="material-symbols-outlined text-base text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">arrow_forward</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-12 mb-24 grid grid-cols-1 gap-6 md:grid-cols-2 lg:col-span-12 lg:grid-cols-4">
-          <div className="md:col-span-2 lg:col-span-4 flex items-center justify-between border-b border-outline pb-4 dark:border-dark-outline/80">
-            <h2 className="text-xl font-headline font-bold text-on-background dark:text-dark-on-background">Entertainment</h2>
-            <button className="relative z-10 cursor-pointer text-xs font-bold font-label text-primary transition-opacity outline-none hover:opacity-70 dark:text-accent">Browse Catalog</button>
-          </div>
-
-          <a href="#" className="paper-card relative flex items-center gap-4 rounded border border-outline/20 p-4 group cursor-pointer dark:border-dark-outline/70">
-            <div className="flex h-10 w-10 items-center justify-center rounded bg-surface-container text-primary transition-colors group-hover:bg-primary group-hover:text-white dark:bg-dark-surface-container dark:text-accent dark:group-hover:bg-accent dark:group-hover:text-slate-950">
-              <span className="material-symbols-outlined text-lg">play_arrow</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">YouTube</p>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-dark-on-surface-variant">Video</p>
-            </div>
-          </a>
-
-          <a href="#" className="paper-card relative flex items-center gap-4 rounded border border-outline/20 p-4 group cursor-pointer dark:border-dark-outline/70">
-            <div className="flex h-10 w-10 items-center justify-center rounded bg-surface-container text-primary transition-colors group-hover:bg-primary group-hover:text-white dark:bg-dark-surface-container dark:text-accent dark:group-hover:bg-accent dark:group-hover:text-slate-950">
-              <span className="material-symbols-outlined text-lg">music_note</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">Spotify</p>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-dark-on-surface-variant">Music</p>
-            </div>
-          </a>
-
-          <a href="#" className="paper-card relative flex items-center gap-4 rounded border border-outline/20 p-4 group cursor-pointer dark:border-dark-outline/70">
-            <div className="flex h-10 w-10 items-center justify-center rounded bg-surface-container text-primary transition-colors group-hover:bg-primary group-hover:text-white dark:bg-dark-surface-container dark:text-accent dark:group-hover:bg-accent dark:group-hover:text-slate-950">
-              <span className="material-symbols-outlined text-lg">forum</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">Reddit</p>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-dark-on-surface-variant">Social</p>
-            </div>
-          </a>
-
-          <a href="#" className="paper-card relative flex items-center gap-4 rounded border border-outline/20 p-4 group cursor-pointer dark:border-dark-outline/70">
-            <div className="flex h-10 w-10 items-center justify-center rounded bg-surface-container text-primary transition-colors group-hover:bg-primary group-hover:text-white dark:bg-dark-surface-container dark:text-accent dark:group-hover:bg-accent dark:group-hover:text-slate-950">
-              <span className="material-symbols-outlined text-lg">movie</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-on-background transition-colors group-hover:text-primary dark:text-dark-on-background dark:group-hover:text-accent">Netflix</p>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant dark:text-dark-on-surface-variant">Streaming</p>
-            </div>
-          </a>
-        </section>
+        <button className="fixed bottom-10 right-10 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-on-background text-white shadow-xl transition hover:scale-105 hover:bg-primary dark:bg-dark-surface dark:text-dark-on-background dark:hover:bg-accent dark:hover:text-slate-950">
+          <span className="material-symbols-outlined text-2xl">edit</span>
+        </button>
       </div>
-
-      <button className="fixed bottom-10 right-10 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-on-background text-white shadow-xl transition-all outline-none hover:scale-110 hover:bg-primary dark:bg-dark-surface-elevated dark:text-dark-on-background dark:hover:bg-accent dark:hover:text-slate-950">
-        <span className="material-symbols-outlined text-2xl">edit</span>
-      </button>
-    </div>
+    </PageContainer>
   )
 }

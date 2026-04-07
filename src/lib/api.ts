@@ -4,6 +4,11 @@ const userSchema = z.object({
   email: z.string().email(),
   subject: z.string().min(1),
   name: z.string().nullable(),
+  displayName: z.string().nullable(),
+})
+
+export const updateUserSchema = z.object({
+  displayName: z.string().trim().max(80),
 })
 
 export const groupSchema = z.object({
@@ -21,14 +26,31 @@ export const linkSchema = z.object({
   title: z.string().min(1),
   url: z.string().url(),
   icon: z.string().nullable(),
+  iconMode: z.enum(['favicon', 'material', 'image', 'text']),
+  iconImageUrl: z.string().url().nullable(),
+  iconText: z.string().nullable(),
   description: z.string().nullable(),
-  tileSize: z.enum(['1x1', '1x2']),
+  tileSize: z.enum(['1x1', '1x3']),
+  openMode: z.enum(['global', 'same-tab', 'new-tab']),
+  backgroundColor: z.string().nullable(),
   sortOrder: z.number().int(),
-  pinned: z.boolean(),
-  archived: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
+
+const wallpaperUrlSchema = z
+  .string()
+  .trim()
+  .max(2048)
+  .url()
+  .refine((value) => {
+    const protocol = new URL(value).protocol
+    return protocol === 'http:' || protocol === 'https:'
+  })
+  .nullable()
+
+const wallpaperBlurSchema = z.number().min(0).max(100)
+const wallpaperOverlayOpacitySchema = z.number().min(0).max(100)
 
 export const settingsSchema = z.object({
   themeMode: z.enum(['light', 'dark', 'system']),
@@ -39,6 +61,9 @@ export const settingsSchema = z.object({
   weatherEnabled: z.boolean().default(true),
   weatherAutoLocate: z.boolean().default(false),
   temperatureUnit: z.enum(['system', 'c', 'f']).default('system'),
+  wallpaperUrl: wallpaperUrlSchema.default(null),
+  wallpaperOverlayOpacity: wallpaperOverlayOpacitySchema.default(78),
+  wallpaperBlur: wallpaperBlurSchema.default(0),
   updatedAt: z.string(),
 })
 
@@ -91,10 +116,13 @@ export type LinkCreatePayload = {
   title: string
   url: string
   icon?: string | null
+  iconMode?: 'favicon' | 'material' | 'image' | 'text'
+  iconImageUrl?: string | null
+  iconText?: string | null
   description?: string | null
-  tileSize?: '1x1' | '1x2'
-  pinned?: boolean
-  archived?: boolean
+  tileSize?: '1x1' | '1x3'
+  openMode?: 'global' | 'same-tab' | 'new-tab'
+  backgroundColor?: string | null
 }
 
 export type LinkUpdatePayload = Partial<{
@@ -102,11 +130,14 @@ export type LinkUpdatePayload = Partial<{
   title: string
   url: string
   icon: string | null
+  iconMode: 'favicon' | 'material' | 'image' | 'text'
+  iconImageUrl: string | null
+  iconText: string | null
   description: string | null
-  tileSize: '1x1' | '1x2'
+  tileSize: '1x1' | '1x3'
+  openMode: 'global' | 'same-tab' | 'new-tab'
+  backgroundColor: string | null
   sortOrder: number
-  pinned: boolean
-  archived: boolean
 }>
 
 export type ReorderPayload = {
@@ -115,6 +146,7 @@ export type ReorderPayload = {
 }
 
 export type SettingsUpdatePayload = Partial<Omit<Settings, 'updatedAt'>>
+export type UserUpdatePayload = z.infer<typeof updateUserSchema>
 
 export class ApiError extends Error {
   code: string
@@ -274,6 +306,11 @@ export const api = {
     request<{ settings: Settings }>('/api/import?settings=1', {
       method: 'POST',
       body: JSON.stringify({ settingsOnly: true, settings: payload }),
+    }),
+  updateUser: (payload: UserUpdatePayload) =>
+    request<{ user: User }>('/api/user', {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
     }),
   exportAll: () => request<ExportPayload>('/api/export'),
   importAll: (payload: unknown) =>

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775471915129,
-  "projectRoot": "d:\\Project\\AeroNav",
+  "lastScanned": 1775559123329,
+  "projectRoot": "D:\\Project\\AeroNav",
   "techStack": {
     "languages": [
       {
@@ -51,7 +51,7 @@
       "build": "tsc -b && vite build",
       "preview": "vite preview",
       "typecheck": "tsc --noEmit",
-      "cf:dev": "wrangler dev",
+      "cf:dev": "wrangler dev --port 8787",
       "cf:deploy": "wrangler deploy",
       "db:migrate:local": "wrangler d1 migrations apply DB --local",
       "db:migrate:remote": "wrangler d1 migrations apply DB"
@@ -78,7 +78,7 @@
       "path": "dist",
       "purpose": "Distribution/build output",
       "fileCount": 1,
-      "lastAccessed": 1775471915074,
+      "lastAccessed": 1775559123269,
       "keyFiles": [
         "index.html"
       ]
@@ -86,34 +86,47 @@
     "migrations": {
       "path": "migrations",
       "purpose": "Database migrations",
-      "fileCount": 1,
-      "lastAccessed": 1775471915075,
+      "fileCount": 9,
+      "lastAccessed": 1775559123270,
       "keyFiles": [
-        "0001_init.sql"
+        "0001_init.sql",
+        "0002_add_search_engine.sql",
+        "0003_add_weather_settings.sql",
+        "0004_add_link_tile_size.sql",
+        "0005_add_link_icon_prefs.sql"
       ]
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 0,
-      "lastAccessed": 1775471915106,
+      "lastAccessed": 1775559123304,
       "keyFiles": []
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 2,
-      "lastAccessed": 1775471915107,
+      "lastAccessed": 1775559123305,
       "keyFiles": [
         "main.tsx",
         "styles.css"
+      ]
+    },
+    "state": {
+      "path": "state",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1775559123305,
+      "keyFiles": [
+        "cancel-signal-state.json"
       ]
     },
     "worker": {
       "path": "worker",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1775471915107,
+      "lastAccessed": 1775559123306,
       "keyFiles": [
         "index.ts"
       ]
@@ -122,17 +135,17 @@
       "path": "dist\\assets",
       "purpose": "Static assets",
       "fileCount": 2,
-      "lastAccessed": 1775471915107,
+      "lastAccessed": 1775559123306,
       "keyFiles": [
-        "index-CfoWq4s2.js",
-        "index-DqnLJtrR.css"
+        "index-BXGEG_f3.js",
+        "index-CnAMXEmd.css"
       ]
     },
     "src\\app": {
       "path": "src\\app",
       "purpose": "Application code",
       "fileCount": 2,
-      "lastAccessed": 1775471915109,
+      "lastAccessed": 1775559123308,
       "keyFiles": [
         "App.tsx",
         "router.tsx"
@@ -141,8 +154,8 @@
     "src\\components": {
       "path": "src\\components",
       "purpose": "UI components",
-      "fileCount": 6,
-      "lastAccessed": 1775471915109,
+      "fileCount": 7,
+      "lastAccessed": 1775559123308,
       "keyFiles": [
         "Button.tsx",
         "ConfirmDialog.tsx",
@@ -153,7 +166,7 @@
       "path": "src\\lib",
       "purpose": "Library code",
       "fileCount": 2,
-      "lastAccessed": 1775471915109,
+      "lastAccessed": 1775559123309,
       "keyFiles": [
         "api.ts",
         "theme.ts"
@@ -162,8 +175,8 @@
     "worker\\routes": {
       "path": "worker\\routes",
       "purpose": "Route handlers",
-      "fileCount": 6,
-      "lastAccessed": 1775471915110,
+      "fileCount": 8,
+      "lastAccessed": 1775559123310,
       "keyFiles": [
         "bootstrap.ts",
         "groups.ts",
@@ -174,32 +187,212 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 48,
-      "lastAccessed": 1775476393342,
+      "accessCount": 537,
+      "lastAccessed": 1775570166828,
       "type": "directory"
     },
     {
-      "path": "src\\features\\navigation\\NavigationPage.tsx",
-      "accessCount": 22,
-      "lastAccessed": 1775476290892,
+      "path": "src\\features\\settings\\SettingsPage.tsx",
+      "accessCount": 238,
+      "lastAccessed": 1775569498978,
       "type": "file"
     },
     {
-      "path": "src\\features\\settings\\SettingsPage.tsx",
-      "accessCount": 14,
-      "lastAccessed": 1775476221481,
+      "path": "src\\features\\navigation\\LinkGrid.tsx",
+      "accessCount": 198,
+      "lastAccessed": 1775569811173,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\navigation\\NavigationPage.tsx",
+      "accessCount": 168,
+      "lastAccessed": 1775569509241,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\navigation\\CreateLinkDrawer.tsx",
+      "accessCount": 138,
+      "lastAccessed": 1775566984316,
+      "type": "file"
+    },
+    {
+      "path": "src\\lib\\api.ts",
+      "accessCount": 105,
+      "lastAccessed": 1775569047216,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\bookmarks\\BookmarksPage.tsx",
+      "accessCount": 89,
+      "lastAccessed": 1775569521446,
+      "type": "file"
+    },
+    {
+      "path": "worker\\routes\\importExport.ts",
+      "accessCount": 76,
+      "lastAccessed": 1775570113661,
+      "type": "file"
+    },
+    {
+      "path": "src\\styles.css",
+      "accessCount": 74,
+      "lastAccessed": 1775569509449,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\Layout.tsx",
+      "accessCount": 66,
+      "lastAccessed": 1775569547079,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Drawer.tsx",
+      "accessCount": 62,
+      "lastAccessed": 1775569521569,
+      "type": "file"
+    },
+    {
+      "path": "worker\\db\\repo.ts",
+      "accessCount": 61,
+      "lastAccessed": 1775570113512,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\navigation\\GroupDrawer.tsx",
+      "accessCount": 58,
+      "lastAccessed": 1775566984285,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Button.tsx",
+      "accessCount": 58,
+      "lastAccessed": 1775569521469,
+      "type": "file"
+    },
+    {
+      "path": "worker\\db\\schema.ts",
+      "accessCount": 57,
+      "lastAccessed": 1775570113597,
+      "type": "file"
+    },
+    {
+      "path": "worker\\routes\\links.ts",
+      "accessCount": 53,
+      "lastAccessed": 1775570142805,
       "type": "file"
     },
     {
       "path": "src\\app\\App.tsx",
-      "accessCount": 9,
-      "lastAccessed": 1775475966028,
+      "accessCount": 52,
+      "lastAccessed": 1775569535363,
       "type": "file"
     },
     {
       "path": "src\\components\\PageShell.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1775475966064,
+      "accessCount": 51,
+      "lastAccessed": 1775569509505,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\Input.tsx",
+      "accessCount": 51,
+      "lastAccessed": 1775569521507,
+      "type": "file"
+    },
+    {
+      "path": "worker\\auth\\access.ts",
+      "accessCount": 47,
+      "lastAccessed": 1775570107470,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\TopNavBar.tsx",
+      "accessCount": 43,
+      "lastAccessed": 1775569547186,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\PageContainer.tsx",
+      "accessCount": 41,
+      "lastAccessed": 1775569509350,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\navigation\\NavigationSearch.tsx",
+      "accessCount": 36,
+      "lastAccessed": 1775568580967,
+      "type": "file"
+    },
+    {
+      "path": "worker\\index.ts",
+      "accessCount": 35,
+      "lastAccessed": 1775569045585,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\layout\\SideNavBar.tsx",
+      "accessCount": 35,
+      "lastAccessed": 1775569547143,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\navigation\\NavigationHero.tsx",
+      "accessCount": 32,
+      "lastAccessed": 1775569535290,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 30,
+      "lastAccessed": 1775569501696,
+      "type": "directory"
+    },
+    {
+      "path": "migrations\\0001_init.sql",
+      "accessCount": 22,
+      "lastAccessed": 1775570130344,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 21,
+      "lastAccessed": 1775569036633,
+      "type": "file"
+    },
+    {
+      "path": "worker\\routes\\bootstrap.ts",
+      "accessCount": 21,
+      "lastAccessed": 1775569061998,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\ConfirmDialog.tsx",
+      "accessCount": 20,
+      "lastAccessed": 1775565265329,
+      "type": "file"
+    },
+    {
+      "path": "src\\features\\navigation\\DeleteLinkDialog.tsx",
+      "accessCount": 12,
+      "lastAccessed": 1775548261719,
+      "type": "file"
+    },
+    {
+      "path": "tailwind.config.js",
+      "accessCount": 11,
+      "lastAccessed": 1775569499470,
+      "type": "file"
+    },
+    {
+      "path": "migrations\\0004_add_link_tile_size.sql",
+      "accessCount": 10,
+      "lastAccessed": 1775570136091,
+      "type": "file"
+    },
+    {
+      "path": "src\\components\\SearchBar.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1775565265389,
       "type": "file"
     },
     {
@@ -209,21 +402,27 @@
       "type": "file"
     },
     {
-      "path": "src\\features\\bookmarks\\BookmarksPage.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1775476149001,
+      "path": "src\\lib\\theme.ts",
+      "accessCount": 7,
+      "lastAccessed": 1775543993444,
       "type": "file"
     },
     {
-      "path": "src\\components\\layout\\SideNavBar.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1775476290943,
+      "path": "src\\components\\EmptyState.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1775565265217,
       "type": "file"
     },
     {
       "path": "src\\main.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1775475982375,
+      "accessCount": 7,
+      "lastAccessed": 1775569032479,
+      "type": "file"
+    },
+    {
+      "path": "wrangler.jsonc",
+      "accessCount": 7,
+      "lastAccessed": 1775569036603,
       "type": "file"
     },
     {
@@ -233,63 +432,27 @@
       "type": "file"
     },
     {
-      "path": "src\\components\\layout\\TopNavBar.tsx",
+      "path": "src\\features\\navigation",
       "accessCount": 5,
-      "lastAccessed": 1775476290819,
-      "type": "file"
+      "lastAccessed": 1775568399793,
+      "type": "directory"
     },
     {
-      "path": "src\\components\\layout\\Layout.tsx",
+      "path": "vite.config.ts",
       "accessCount": 5,
-      "lastAccessed": 1775476290866,
+      "lastAccessed": 1775569035764,
       "type": "file"
     },
     {
-      "path": "src\\lib\\api.ts",
-      "accessCount": 4,
-      "lastAccessed": 1775473052124,
-      "type": "file"
-    },
-    {
-      "path": "src\\components\\Button.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1775475858511,
-      "type": "file"
-    },
-    {
-      "path": "package.json",
-      "accessCount": 4,
-      "lastAccessed": 1775475897108,
-      "type": "file"
-    },
-    {
-      "path": "src\\styles.css",
-      "accessCount": 4,
-      "lastAccessed": 1775475966010,
-      "type": "file"
-    },
-    {
-      "path": "worker\\auth\\access.ts",
+      "path": "src\\features",
       "accessCount": 3,
-      "lastAccessed": 1775473038931,
-      "type": "file"
+      "lastAccessed": 1775546949258,
+      "type": "directory"
     },
     {
-      "path": "worker\\index.ts",
+      "path": "src\\components\\layout\\navigationItems.ts",
       "accessCount": 3,
-      "lastAccessed": 1775473038955,
-      "type": "file"
-    },
-    {
-      "path": "src\\lib\\theme.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775475947598,
-      "type": "file"
-    },
-    {
-      "path": "tailwind.config.js",
-      "accessCount": 3,
-      "lastAccessed": 1775475947617,
+      "lastAccessed": 1775567552989,
       "type": "file"
     },
     {
@@ -299,63 +462,15 @@
       "type": "file"
     },
     {
-      "path": "worker\\routes\\importExport.ts",
+      "path": "worker\\db",
       "accessCount": 2,
-      "lastAccessed": 1775473086118,
-      "type": "file"
-    },
-    {
-      "path": "worker\\db\\repo.ts",
-      "accessCount": 2,
-      "lastAccessed": 1775473086169,
-      "type": "file"
-    },
-    {
-      "path": "src",
-      "accessCount": 2,
-      "lastAccessed": 1775475796183,
+      "lastAccessed": 1775543261484,
       "type": "directory"
     },
     {
-      "path": "src\\components\\Input.tsx",
+      "path": "C:\\Users\\Liebesfreud\\.claude\\plans\\cozy-launching-conway.md",
       "accessCount": 2,
-      "lastAccessed": 1775475858466,
-      "type": "file"
-    },
-    {
-      "path": "src\\components\\Drawer.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775475864605,
-      "type": "file"
-    },
-    {
-      "path": "src\\components\\ConfirmDialog.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775475864698,
-      "type": "file"
-    },
-    {
-      "path": "src\\components\\SearchBar.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775475947666,
-      "type": "file"
-    },
-    {
-      "path": "wrangler.jsonc",
-      "accessCount": 1,
-      "lastAccessed": 1775472451416,
-      "type": "file"
-    },
-    {
-      "path": "vite.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775472497056,
-      "type": "file"
-    },
-    {
-      "path": "worker\\routes\\bootstrap.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775473039008,
+      "lastAccessed": 1775547153432,
       "type": "file"
     },
     {
@@ -365,27 +480,9 @@
       "type": "file"
     },
     {
-      "path": "src\\components\\EmptyState.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775475871274,
-      "type": "file"
-    },
-    {
       "path": "C:\\Users\\Liebesfreud\\.claude\\plans\\abundant-tinkering-flamingo.md",
       "accessCount": 1,
       "lastAccessed": 1775475981215,
-      "type": "file"
-    },
-    {
-      "path": "src\\components\\layout\\navigationItems.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775476304228,
-      "type": "file"
-    },
-    {
-      "path": "src\\components\\layout\\PageContainer.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775476305484,
       "type": "file"
     }
   ],
