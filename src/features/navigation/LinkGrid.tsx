@@ -17,6 +17,14 @@ function renderTextFallback(text: string, sizeClass: string, textClassName = 'te
   )
 }
 
+function renderPlainTextFallback(text: string, sizeClass: string, textClassName = 'text-sm') {
+  return (
+    <div className={`${sizeClass} flex items-center justify-center text-primary dark:text-primary ${textClassName} font-bold`}>
+      {text.trim().slice(0, 2).toUpperCase() || '?'}
+    </div>
+  )
+}
+
 function getTileClassName(tileSize: '1x1' | '1x3', density: 'compact' | 'comfortable') {
   if (tileSize === '1x1') {
     return density === 'compact'
@@ -75,16 +83,14 @@ function LinkVisual({
 
   if (link.iconMode === 'image' && link.iconImageUrl && !imageFailed) {
     return (
-      <div className={iconFrameClassName}>
-        <img
-          src={link.iconImageUrl}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          onError={() => setImageFailed(true)}
-          className={`h-full w-full object-contain ${imagePaddingClassName}`}
-        />
-      </div>
+      <img
+        src={link.iconImageUrl}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        onError={() => setImageFailed(true)}
+        className={`h-full w-full shrink-0 object-contain ${iconClassName} ${imagePaddingClassName}`}
+      />
     )
   }
 
@@ -111,6 +117,10 @@ function LinkVisual({
         className={faviconClassName}
       />
     )
+  }
+
+  if (link.iconMode === 'favicon' || link.iconMode === 'image') {
+    return renderPlainTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
   }
 
   return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)

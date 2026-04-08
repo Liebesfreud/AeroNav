@@ -1,6 +1,7 @@
 import { useState, type SVGProps } from 'react'
-import { Icon as IconifyIcon } from '@iconify/react'
 import type { Icon, IconProps } from '@tabler/icons-react'
+import * as TablerIcons from '@tabler/icons-react'
+import { getNamedIconUrl } from '../lib/favicon'
 import {
   IconAperture,
   IconArrowRight,
@@ -119,11 +120,46 @@ const iconMap: Record<string, Icon> = {
   x: IconX,
 }
 
+const tablerExports = TablerIcons as Record<string, unknown>
+
+function isTablerIcon(value: unknown): value is Icon {
+  if (typeof value !== 'function') return false
+  const iconCandidate = value as unknown as Record<string, unknown>
+  if ('displayName' in iconCandidate) return true
+  if ('iconNode' in iconCandidate) return true
+  if (typeof iconCandidate.render === 'function') return true
+  return false
+}
+
+function toTablerExportName(name: string) {
+  const normalized = name
+    .trim()
+    .replace(/^icon(?=[A-Z0-9])/, '')
+    .replace(/^icon[-_\s]+/i, '')
+    .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
+    .split(/[^a-zA-Z0-9]+|(?<=[a-z0-9])(?=[A-Z])/)
+    .filter(Boolean)
+    .map((part) => part[0].toUpperCase() + part.slice(1).toLowerCase())
+    .join('')
+
+  return normalized ? `Icon${normalized}` : ''
+}
+
 function resolveIcon(name: string | null | undefined, fallback: Icon) {
   const key = name?.trim()
   if (!key) return fallback
 
-  return iconMap[key] ?? iconMap[key.replace(/-/g, '_')] ?? fallback
+  const mapped = iconMap[key] ?? iconMap[key.replace(/-/g, '_')]
+  if (mapped) return mapped
+
+  const direct = tablerExports[key]
+  if (isTablerIcon(direct)) return direct
+
+  const normalizedKey = toTablerExportName(key)
+  if (!normalizedKey) return fallback
+
+  const normalized = tablerExports[normalizedKey]
+  return isTablerIcon(normalized) ? normalized : fallback
 }
 
 type AppIconProps = Omit<IconProps, 'ref'> & {
@@ -135,42 +171,31 @@ export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconPr
   const {
     className,
     stroke: _stroke,
-    color,
-    width,
-    height,
-    style,
-    onClick,
-    role,
-    tabIndex,
     ...restProps
   } = props
   const trimmedName = name?.trim()
-  const mappedIcon = trimmedName ? iconMap[trimmedName] ?? iconMap[trimmedName.replace(/-/g, '_')] : null
-  const [iconifyFailed, setIconifyFailed] = useState(false)
+  const resolvedIcon = trimmedName ? resolveIcon(trimmedName, fallback) : fallback
+  const hasLocalIcon = !trimmedName || resolvedIcon !== fallback
+  const [namedIconFailed, setNamedIconFailed] = useState(false)
 
-  if (trimmedName && !mappedIcon && !iconifyFailed) {
+  if (trimmedName && !hasLocalIcon && !namedIconFailed) {
+    const namedIconUrl = getNamedIconUrl(trimmedName)
+
+    if (namedIconUrl) {
     return (
-      <span
-        aria-hidden="true"
-        onErrorCapture={() => setIconifyFailed(true)}
-        className="inline-flex items-center justify-center"
-      >
-        <IconifyIcon
-          icon={trimmedName}
-          color={typeof color === 'string' ? color : undefined}
-          width={typeof width === 'string' || typeof width === 'number' ? width : undefined}
-          height={typeof height === 'string' || typeof height === 'number' ? height : undefined}
-          style={style}
-          onClick={onClick}
-          role={role}
-          tabIndex={tabIndex}
-          className={["text-primary dark:text-primary", className].filter(Boolean).join(' ')}
+        <img
+          src={namedIconUrl}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          onError={() => setNamedIconFailed(true)}
+          className={[className, 'object-contain'].filter(Boolean).join(' ')}
         />
-      </span>
     )
+    }
   }
 
-  const IconComponent = resolveIcon(trimmedName, fallback)
+  const IconComponent = resolvedIcon
 
   return (
     <IconComponent
