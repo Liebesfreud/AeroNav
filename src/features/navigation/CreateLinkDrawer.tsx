@@ -4,6 +4,7 @@ import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
 import { Drawer } from '../../components/Drawer'
 import { Input } from '../../components/Input'
+import { NamedIcon } from '../../components/NamedIcon'
 import { Select } from '../../components/Select'
 import { getFaviconUrl } from '../../lib/favicon'
 
@@ -33,7 +34,6 @@ function LinkPreview({ draft }: { draft: LinkDraft }) {
   const iconOnly = draft.tileSize === '1x1'
   const faviconUrl = getFaviconUrl(draft.url)
   const iconClassName = iconOnly ? 'h-full w-full' : 'h-[74%] w-[74%]'
-  const glyphClassName = iconOnly ? 'text-[2.4rem]' : 'text-[20px]'
   const fallbackText = (draft.iconText || draft.title || '?').trim().slice(0, 2).toUpperCase() || '?'
   const cardStyle = getPreviewStyle(draft.backgroundColor)
 
@@ -43,7 +43,7 @@ function LinkPreview({ draft }: { draft: LinkDraft }) {
     </div>
   ) : draft.iconMode === 'material' && draft.icon ? (
     <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background text-white dark:bg-dark-on-background dark:text-dark-background`}>
-      <AppIcon name={draft.icon} className={glyphClassName} />
+      <NamedIcon name={draft.icon} className={`h-full w-full object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`} />
     </div>
   ) : draft.iconMode === 'text' ? (
     <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background font-bold text-white dark:bg-dark-on-background dark:text-dark-background ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
@@ -220,7 +220,7 @@ export function CreateLinkDrawer({
                       className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full p-1 text-on-surface-variant hover:bg-surface hover:text-on-surface dark:text-dark-on-surface-variant dark:hover:bg-dark-surface dark:hover:text-dark-on-surface"
                       title="恢复默认"
                     >
-                      <AppIcon name="close" className="text-[16px]" />
+      <AppIcon name="x" className="text-[16px]" />
                     </button>
                   ) : null}
                 </div>

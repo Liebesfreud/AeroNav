@@ -6,3 +6,9 @@ export function getFaviconUrl(url: string) {
     return null
   }
 }
+
+export function getNamedIconUrl(name: string) {
+  const normalized = name.trim()
+  if (!normalized) return null
+  return `/api/icon?name=${encodeURIComponent(normalized)}`
+}

@@ -43,7 +43,7 @@ export function GroupDrawer({
           <Input
             value={draft.icon}
             onChange={(event) => setDraft((current) => ({ ...current, icon: event.target.value }))}
-            placeholder="内置图标名（如：folder）"
+            placeholder="图标名（如：folder、plane、brand-github）"
           />
         </div>
         {errorMessage ? <p className="text-sm text-red-500">{errorMessage}</p> : null}

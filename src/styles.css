@@ -73,10 +73,6 @@ body {
   background: rgba(24, 23, 22, var(--wallpaper-overlay-opacity, 0.78));
 }
 
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
 .paper-card {
   background: var(--app-surface);
   box-shadow: var(--app-shadow);

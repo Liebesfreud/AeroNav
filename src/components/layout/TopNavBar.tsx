@@ -18,7 +18,7 @@ export function TopNavBar({ searchNode }: TopNavBarProps) {
             aria-label="打开账户"
             className="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-accent dark:focus-visible:ring-accent/20"
           >
-            <AppIcon name="account_circle" className="h-5 w-5" />
+            <AppIcon name="user-circle" className="h-5 w-5" />
           </button>
         </div>
       </div>

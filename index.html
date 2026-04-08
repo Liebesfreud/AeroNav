@@ -5,11 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#F9F8F6" />
     <title>AeroNav</title>
+    <style>
+      :root {
+        color-scheme: light;
+        background-color: #F9F8F6;
+        color: #2f3331;
+      }
+
+      :root.dark {
+        color-scheme: dark;
+        background-color: #181716;
+        color: #E2DFD8;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background-color: inherit;
+        color: inherit;
+      }
+    </style>
+    <script>
+      ;(() => {
+        const storageKey = 'aeronav:theme-mode'
+        const darkThemeColor = '#181716'
+        const lightThemeColor = '#F9F8F6'
+
+        const resolveTheme = (mode) => {
+          if (mode === 'dark') return 'dark'
+          if (mode === 'light') return 'light'
+
+          return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+
+        try {
+          const mode = localStorage.getItem(storageKey)
+          const theme = resolveTheme(mode)
+          const isDark = theme === 'dark'
+          const root = document.documentElement
+          root.classList.toggle('dark', isDark)
+
+          const themeColor = document.querySelector('meta[name="theme-color"]')
+          themeColor?.setAttribute('content', isDark ? darkThemeColor : lightThemeColor)
+        } catch {
+          const isDark = resolveTheme('system') === 'dark'
+          const root = document.documentElement
+          root.classList.toggle('dark', isDark)
+
+          const themeColor = document.querySelector('meta[name="theme-color"]')
+          themeColor?.setAttribute('content', isDark ? darkThemeColor : lightThemeColor)
+        }
+      })()
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-[#F9F8F6] text-[#2f3331] antialiased selection:bg-primary/20 min-h-screen">
+  <body class="bg-[#F9F8F6] text-[#2f3331] antialiased selection:bg-primary/20 min-h-screen dark:bg-dark-background dark:text-dark-on-background">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,18 +1,12 @@
 import type { SVGProps } from 'react'
 import type { Icon, IconProps } from '@tabler/icons-react'
-import * as TablerIcons from '@tabler/icons-react'
 import {
   IconAperture,
   IconArrowRight,
   IconArrowUpRight,
   IconBadge,
-  IconBookmark,
-  IconBriefcase,
   IconChecks,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsDown,
-  IconMovie,
+  IconChevronDown,
   IconCloud,
   IconCloudFog,
   IconCloudRain,
@@ -25,7 +19,6 @@ import {
   IconDownload,
   IconDroplet,
   IconExternalLink,
-  IconFolder,
   IconFolderOpen,
   IconFolderPlus,
   IconGridDots,
@@ -34,47 +27,42 @@ import {
   IconImageInPicture,
   IconKey,
   IconLayoutDashboard,
-  IconLocation,
-  IconMail,
-  IconMenu2,
-  IconMessageCircle,
-  IconMoon,
-  IconMusic,
   IconLayoutSidebarLeftCollapse,
+  IconLocation,
+  IconMenu2,
+  IconMoon,
   IconPalette,
   IconPencil,
   IconPencilBolt,
   IconPencilCog,
-  IconPhoto,
-  IconPlayerPlay,
   IconPlus,
   IconSearch,
   IconSettings,
   IconSquareRoundedLetterC,
   IconSun,
-  IconTerminal2,
   IconTemperature,
   IconUpload,
   IconUserCircle,
   IconX,
 } from '@tabler/icons-react'
 
-
 const iconMap: Record<string, Icon> = {
   account_circle: IconUserCircle,
   add: IconPlus,
+  aperture: IconAperture,
   apps: IconGridDots,
   arrow_forward: IconArrowRight,
   badge: IconBadge,
   blur_on: IconAperture,
-  bookmarks: IconBookmark,
   calendar_today: IconSquareRoundedLetterC,
   check: IconChecks,
-  chevron_left: IconChevronLeft,
-  chevron_right: IconChevronRight,
+  checks: IconChecks,
+  chevrons_down: IconChevronDown,
+  'chevrons-down': IconChevronDown,
   cloud: IconCloud,
   close: IconX,
   contrast: IconContrast2,
+  'contrast-2': IconContrast2,
   create_new_folder: IconFolderPlus,
   dark_mode: IconMoon,
   dashboard_customize: IconLayoutDashboard,
@@ -82,86 +70,57 @@ const iconMap: Record<string, Icon> = {
   device_thermostat: IconTemperature,
   download: IconDownload,
   draw: IconPencil,
-  edit: IconPencil,
   edit_note: IconPencilBolt,
   edit_square: IconPencilCog,
-  folder: IconFolder,
+  'external-link': IconExternalLink,
   folder_open: IconFolderOpen,
+  'folder-open': IconFolderOpen,
+  folder_plus: IconFolderPlus,
+  'folder-plus': IconFolderPlus,
   foggy: IconCloudFog,
-  forum: IconMessageCircle,
+  grid_dots: IconGridDots,
+  'grid-dots': IconGridDots,
   home: IconHome,
+  image_in_picture: IconImageInPicture,
+  'layout-dashboard': IconLayoutDashboard,
+  left_panel_close: IconLayoutSidebarLeftCollapse,
+  'layout-sidebar-left-collapse': IconLayoutSidebarLeftCollapse,
   light_mode: IconSun,
   manage_search: IconSearch,
   menu: IconMenu2,
-  movie: IconMovie,
-  music_note: IconMusic,
+  menu_2: IconMenu2,
+  'menu-2': IconMenu2,
   my_location: IconLocation,
-  mail: IconMail,
   north_east: IconArrowUpRight,
   opacity: IconDroplet,
   open_in_new: IconExternalLink,
   palette: IconPalette,
   partly_cloudy_day: IconCloudUp,
   password: IconKey,
-  play_arrow: IconPlayerPlay,
+  'pencil-cog': IconPencilCog,
   rainy: IconCloudRain,
   rainy_heavy: IconCloudRain,
   routine: IconAperture,
-  school: IconPhoto,
+  search: IconSearch,
   settings: IconSettings,
   snowing: IconCloudSnow,
   sunny: IconSun,
-  terminal: IconTerminal2,
-  theaters: IconMovie,
   thunderstorm: IconCloudStorm,
   travel_explore: IconCompass,
-  unfold_more: IconChevronsDown,
+  unfold_more: IconChevronDown,
   upload: IconUpload,
+  'user-circle': IconUserCircle,
   wallpaper: IconImageInPicture,
   weather_mix: IconCloudRain,
   weather_snowy: IconCloudSnow,
-  work: IconBriefcase,
-  left_panel_close: IconLayoutSidebarLeftCollapse,
-}
-
-const tablerExports = TablerIcons as Record<string, unknown>
-
-function isTablerIcon(value: unknown): value is Icon {
-  if (typeof value === 'function') return true
-  // @tabler/icons-react v3 uses React.forwardRef, so icons are objects
-  if (value != null && typeof value === 'object' && 'render' in value && typeof (value as Record<string, unknown>).render === 'function') return true
-  return false
-}
-
-function toTablerExportName(name: string) {
-  const normalized = name
-    .trim()
-    .replace(/^icon(?=[A-Z0-9])/, '')
-    .replace(/^icon[-_\s]+/i, '')
-    .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
-    .split(/[^a-zA-Z0-9]+|(?<=[a-z0-9])(?=[A-Z])/)
-    .filter(Boolean)
-    .map((part) => part[0].toUpperCase() + part.slice(1).toLowerCase())
-    .join('')
-
-  return normalized ? `Icon${normalized}` : ''
+  x: IconX,
 }
 
 function resolveIcon(name: string | null | undefined, fallback: Icon) {
   const key = name?.trim()
   if (!key) return fallback
 
-  const mapped = iconMap[key]
-  if (mapped) return mapped
-
-  const direct = tablerExports[key]
-  if (isTablerIcon(direct)) return direct
-
-  const normalizedKey = toTablerExportName(key)
-  if (!normalizedKey) return fallback
-
-  const normalized = tablerExports[normalizedKey]
-  return isTablerIcon(normalized) ? normalized : fallback
+  return iconMap[key] ?? iconMap[key.replace(/-/g, '_')] ?? fallback
 }
 
 type AppIconProps = Omit<IconProps, 'ref'> & {

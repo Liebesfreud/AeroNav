@@ -35,7 +35,7 @@ export function NavigationHero({
         )
       : (
           <div className="flex items-center gap-2 text-on-surface-variant dark:text-dark-on-surface-variant">
-            <AppIcon name="routine" className="h-[17px] w-[17px] text-primary/60 dark:text-accent/70" />
+            <AppIcon name="aperture" className="h-[17px] w-[17px] text-primary/60 dark:text-accent/70" />
             <span className="font-label text-xs uppercase tracking-[0.18em]">{weather.message}</span>
           </div>
         )

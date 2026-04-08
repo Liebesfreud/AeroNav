@@ -1,6 +1,7 @@
 import { useState, type CSSProperties, type DragEvent } from 'react'
 import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
+import { NamedIcon } from '../../components/NamedIcon'
 import type { Group, LinkItem } from '../../lib/api'
 import { getFaviconUrl } from '../../lib/favicon'
 
@@ -105,7 +106,7 @@ function LinkVisual({
   if (link.iconMode === 'material' && link.icon) {
     return (
       <div className={`${iconClassName} flex shrink-0 items-center justify-center rounded-2xl text-white ${brandColor}`}>
-        <AppIcon name={link.icon} className={glyphClassName} />
+        <NamedIcon name={link.icon} className={`${glyphClassName} h-full w-full object-contain p-1.5`} />
       </div>
     )
   }
@@ -194,7 +195,7 @@ export function LinkGrid({
           {editMode ? (
             <div className="mt-6 flex justify-center">
               <Button onClick={onCreateGroup}>
-                <AppIcon name="create_new_folder" className="mr-2 h-5 w-5" />
+                        <AppIcon name="folder-plus" className="mr-2 h-5 w-5" />
                 创建分组
               </Button>
             </div>
@@ -213,7 +214,7 @@ export function LinkGrid({
             <p className="mt-1 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">点击卡片编辑，拖动卡片调整顺序。</p>
           </div>
           <Button variant="secondary" onClick={onCreateGroup}>
-            <AppIcon name="create_new_folder" className="mr-2 h-4 w-4" />
+                        <AppIcon name="folder-plus" className="mr-2 h-4 w-4" />
             新建分组
           </Button>
         </div>
@@ -230,7 +231,7 @@ export function LinkGrid({
                 <div className="flex min-w-0 items-center gap-3">
                   {group.icon ? (
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
-                      <AppIcon name={group.icon} className="h-5 w-5" />
+                      <NamedIcon name={group.icon} className="h-5 w-5 object-contain" />
                     </div>
                   ) : null}
                   <div className="min-w-0">
@@ -349,7 +350,7 @@ export function LinkGrid({
                   {editMode ? (
                     <div className="mt-5 flex justify-center">
                       <Button variant="secondary" onClick={() => onCreateLink(group)}>
-                        <AppIcon name="add" className="mr-2 h-4 w-4" />
+                        <AppIcon name="plus" className="mr-2 h-4 w-4" />
                         添加链接
                       </Button>
                     </div>

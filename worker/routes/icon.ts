@@ -1,15 +1,56 @@
+import tablerNodes from '../../node_modules/@tabler/icons/tabler-nodes-outline.json'
 import { ApiError } from '../auth/access'
 
 const CACHE_CONTROL = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400'
 
-export async function getIcon(request: Request) {
-  const url = new URL(request.url)
-  const rawUrl = url.searchParams.get('url')
+type TablerNode = [string, Record<string, string>]
+const tablerNodeMap = tablerNodes as unknown as Record<string, TablerNode[]>
 
-  if (!rawUrl) {
-    throw new ApiError(400, 'ICON_URL_REQUIRED', '缺少图标地址参数。')
+function escapeAttribute(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+}
+
+function normalizeIconName(name: string) {
+  return name
+    .trim()
+    .replace(/^icon(?=[A-Z0-9])/, '')
+    .replace(/^icon[-_\s]+/i, '')
+    .replace(/_/g, '-')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .toLowerCase()
+}
+
+function renderSvg(name: string) {
+  const normalized = normalizeIconName(name)
+  const nodes = tablerNodeMap[normalized]
+
+  if (!nodes) {
+    throw new ApiError(404, 'ICON_NOT_FOUND', '未找到可用图标。')
   }
 
+  const body = nodes.map(([tagName, attributes]) => {
+    const attrs = Object.entries(attributes)
+      .map(([key, value]) => `${key}="${escapeAttribute(value)}"`)
+      .join(' ')
+    return `<${tagName}${attrs ? ` ${attrs}` : ''} />`
+  }).join('')
+
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
+    body,
+    '</svg>',
+  ].join('')
+}
+
+async function getFaviconResponse(requestUrl: URL, rawUrl: string) {
   let sourceUrl: URL
 
   try {
@@ -23,13 +64,11 @@ export async function getIcon(request: Request) {
   }
 
   const targetUrl = new URL('/favicon.ico', sourceUrl.origin)
-  const cacheKey = new Request(url.toString(), { method: 'GET' })
+  const cacheKey = new Request(requestUrl.toString(), { method: 'GET' })
   const cache = caches.default
   const cached = await cache.match(cacheKey)
 
-  if (cached) {
-    return cached
-  }
+  if (cached) return cached
 
   let upstream: Response
 
@@ -59,6 +98,26 @@ export async function getIcon(request: Request) {
   })
 
   await cache.put(cacheKey, response.clone())
-
   return response
+}
+
+export async function getIcon(request: Request) {
+  const url = new URL(request.url)
+  const rawName = url.searchParams.get('name')
+  const rawUrl = url.searchParams.get('url')
+
+  if (rawName) {
+    return new Response(renderSvg(rawName), {
+      headers: {
+        'Content-Type': 'image/svg+xml; charset=utf-8',
+        'Cache-Control': CACHE_CONTROL,
+      },
+    })
+  }
+
+  if (rawUrl) {
+    return getFaviconResponse(url, rawUrl)
+  }
+
+  throw new ApiError(400, 'ICON_SOURCE_REQUIRED', '缺少图标来源参数。')
 }

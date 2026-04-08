@@ -46,7 +46,7 @@ export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpac
             onClick={onToggleSidebar}
             className="fixed left-6 top-6 z-40 hidden h-11 w-11 items-center justify-center rounded-xl border border-outline/70 bg-surface/90 text-on-surface-variant shadow-sm backdrop-blur transition-all duration-200 hover:bg-surface-container-low hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 md:flex dark:border-dark-outline/70 dark:bg-dark-surface/90 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/80 dark:hover:text-dark-on-background"
           >
-            <AppIcon name="menu" className="h-5 w-5" />
+              <AppIcon name="menu-2" className="h-5 w-5" />
           </button>
         ) : null}
         <SideNavBar

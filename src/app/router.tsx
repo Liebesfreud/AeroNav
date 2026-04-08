@@ -1,8 +1,24 @@
+import { Suspense, lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { App } from './App'
-import { NavigationPage } from '../features/navigation/NavigationPage'
-import { SettingsPage } from '../features/settings/SettingsPage'
-import { BookmarksPage } from '../features/bookmarks/BookmarksPage'
+
+const NavigationPage = lazy(async () => {
+  const module = await import('../features/navigation/NavigationPage')
+  return { default: module.NavigationPage }
+})
+
+const SettingsPage = lazy(async () => {
+  const module = await import('../features/settings/SettingsPage')
+  return { default: module.SettingsPage }
+})
+
+function RouteFallback() {
+  return (
+    <div className="mx-auto flex w-full max-w-[60rem] items-center justify-center px-4 py-24 text-sm text-on-surface-variant dark:text-dark-on-surface-variant sm:px-6 lg:px-8">
+      正在加载页面...
+    </div>
+  )
+}
 
 export const router = createBrowserRouter([
   {
@@ -11,15 +27,19 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <NavigationPage />
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <NavigationPage />
+          </Suspense>
+        )
       },
       {
         path: 'settings',
-        element: <SettingsPage />
-      },
-      {
-        path: 'bookmarks',
-        element: <BookmarksPage />
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <SettingsPage />
+          </Suspense>
+        )
       }
     ]
   },

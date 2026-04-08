@@ -46,10 +46,10 @@ type NumberControlProps = {
 type SettingsTab = 'user' | 'appearance' | 'navigation' | 'weather' | 'data'
 
 const settingTabs: Array<{ value: SettingsTab; label: string; icon: string }> = [
-  { value: 'user', label: '用户', icon: 'account_circle' },
+  { value: 'user', label: '用户', icon: 'user-circle' },
   { value: 'appearance', label: '外观', icon: 'palette' },
-  { value: 'navigation', label: '导航', icon: 'travel_explore' },
-  { value: 'weather', label: '天气', icon: 'partly_cloudy_day' },
+  { value: 'navigation', label: '导航', icon: 'compass' },
+  { value: 'weather', label: '天气', icon: 'cloud-up' },
   { value: 'data', label: '数据', icon: 'database' },
 ]
 
@@ -383,7 +383,7 @@ export function SettingsPage() {
                   <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
                     <div className="flex items-center gap-3">
                       <div className="flex shrink-0 items-center justify-center text-primary dark:text-accent">
-                        <AppIcon name="account_circle" className="h-10 w-10" />
+                        <AppIcon name="user-circle" className="h-10 w-10" />
                       </div>
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-on-surface dark:text-dark-on-surface">{displayName}</p>
@@ -395,7 +395,7 @@ export function SettingsPage() {
                   <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
                     <div className="flex items-start gap-3">
                       <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                        <span className="material-symbols-outlined text-[18px]">badge</span>
+                        <AppIcon name="badge" className="h-[18px] w-[18px]" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">显示名称</p>
@@ -415,7 +415,7 @@ export function SettingsPage() {
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                          <span className="material-symbols-outlined text-[18px]">password</span>
+                          <AppIcon name="password" className="h-[18px] w-[18px]" />
                         </div>
                         <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">密码</p>
                       </div>
@@ -428,7 +428,7 @@ export function SettingsPage() {
               {activeTab === 'appearance' ? (
                 <>
                   <SegmentedControl
-                    icon="contrast"
+                    icon="contrast-2"
                     title="主题模式"
                     value={settings.themeMode}
                     options={[
@@ -439,7 +439,7 @@ export function SettingsPage() {
                     onChange={(value) => saveSetting(updateSettings.mutate, 'themeMode', value)}
                   />
                   <SegmentedControl
-                    icon="dashboard_customize"
+                    icon="layout-dashboard"
                     title="卡片密度"
                     value={settings.cardDensity}
                     options={[
@@ -449,7 +449,7 @@ export function SettingsPage() {
                     onChange={(value) => saveSetting(updateSettings.mutate, 'cardDensity', value)}
                   />
                   <SettingToggleCard
-                    icon="apps"
+                    icon="grid-dots"
                     title="显示分组图标"
                     checked={settings.showGroupIcons}
                     onToggle={() => saveSetting(updateSettings.mutate, 'showGroupIcons', !settings.showGroupIcons)}
@@ -457,7 +457,7 @@ export function SettingsPage() {
                   <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
                     <div className="flex items-start gap-3">
                       <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                        <span className="material-symbols-outlined text-[18px]">wallpaper</span>
+                        <AppIcon name="wallpaper" className="h-[18px] w-[18px]" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">全局壁纸</p>
@@ -484,7 +484,7 @@ export function SettingsPage() {
                     </div>
                   </div>
                   <NumberControl
-                    icon="opacity"
+                    icon="droplet"
                     title="背景遮罩强度"
                     value={settings.wallpaperOverlayOpacity}
                     min={0}
@@ -494,7 +494,7 @@ export function SettingsPage() {
                     onChange={(value) => saveSetting(updateSettings.mutate, 'wallpaperOverlayOpacity', normalizeNumberSetting(String(value), 0, 100))}
                   />
                   <NumberControl
-                    icon="blur_on"
+                    icon="aperture"
                     title="背景模糊"
                     value={settings.wallpaperBlur}
                     min={0}
@@ -508,13 +508,13 @@ export function SettingsPage() {
               {activeTab === 'navigation' ? (
                 <>
                   <SettingToggleCard
-                    icon="open_in_new"
+                    icon="external-link"
                     title="默认在新标签页打开"
                     checked={settings.openInNewTab}
                     onToggle={() => saveSetting(updateSettings.mutate, 'openInNewTab', !settings.openInNewTab)}
                   />
                   <SegmentedControl
-                    icon="manage_search"
+                    icon="search"
                     title="默认搜索引擎"
                     value={settings.searchEngine}
                     options={[
@@ -535,14 +535,14 @@ export function SettingsPage() {
                     onToggle={() => saveSetting(updateSettings.mutate, 'weatherEnabled', !settings.weatherEnabled)}
                   />
                   <SettingToggleCard
-                    icon="my_location"
+                    icon="location"
                     title="自动定位天气位置"
                     checked={settings.weatherAutoLocate}
                     disabled={!settings.weatherEnabled}
                     onToggle={() => saveSetting(updateSettings.mutate, 'weatherAutoLocate', !settings.weatherAutoLocate)}
                   />
                   <SegmentedControl
-                    icon="device_thermostat"
+                    icon="temperature"
                     title="温度单位"
                     value={settings.temperatureUnit}
                     disabled={!settings.weatherEnabled}
@@ -562,7 +562,7 @@ export function SettingsPage() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-3">
                         <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                          <span className="material-symbols-outlined text-[18px]">download</span>
+                          <AppIcon name="download" className="h-[18px] w-[18px]" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">导出配置</p>
@@ -576,7 +576,7 @@ export function SettingsPage() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div className="flex items-start gap-3">
                         <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                          <span className="material-symbols-outlined text-[18px]">upload</span>
+                          <AppIcon name="upload" className="h-[18px] w-[18px]" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">恢复备份</p>
