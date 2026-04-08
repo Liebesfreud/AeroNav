@@ -127,7 +127,10 @@ const iconMap: Record<string, Icon> = {
 const tablerExports = TablerIcons as Record<string, unknown>
 
 function isTablerIcon(value: unknown): value is Icon {
-  return typeof value === 'function'
+  if (typeof value === 'function') return true
+  // @tabler/icons-react v3 uses React.forwardRef, so icons are objects
+  if (value != null && typeof value === 'object' && 'render' in value && typeof (value as Record<string, unknown>).render === 'function') return true
+  return false
 }
 
 function toTablerExportName(name: string) {
