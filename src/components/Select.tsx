@@ -1,4 +1,5 @@
 import * as SelectPrimitive from '@radix-ui/react-select'
+import { AppIcon } from './AppIcon'
 
 type SelectOption<T extends string = string> = {
   value: T
@@ -39,7 +40,7 @@ export function Select<T extends string = string>({
       >
         <SelectPrimitive.Value placeholder={placeholder} />
         <SelectPrimitive.Icon className="shrink-0 text-on-surface-variant dark:text-dark-on-surface-variant">
-          <span className="material-symbols-outlined text-[18px]">unfold_more</span>
+          <AppIcon name="unfold_more" className="h-[18px] w-[18px]" />
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
 
@@ -59,7 +60,7 @@ export function Select<T extends string = string>({
               >
                 <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
                 <SelectPrimitive.ItemIndicator className="absolute right-3 inline-flex items-center text-primary dark:text-accent">
-                  <span className="material-symbols-outlined text-[18px]">check</span>
+                  <AppIcon name="check" className="h-[18px] w-[18px]" />
                 </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
             ))}

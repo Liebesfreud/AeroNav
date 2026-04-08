@@ -118,6 +118,50 @@ export function unauthorizedHtml(appName = 'AeroNav') {
 
 export async function ensureSettings(env: Env) {
   await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS groups (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      icon TEXT,
+      sort_order INTEGER NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`,
+  ).run()
+
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS links (
+      id TEXT PRIMARY KEY,
+      group_id TEXT NOT NULL,
+      title TEXT NOT NULL,
+      url TEXT NOT NULL,
+      icon TEXT,
+      description TEXT,
+      sort_order INTEGER NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (group_id) REFERENCES groups(id)
+    )`,
+  ).run()
+
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS settings (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      theme_mode TEXT NOT NULL DEFAULT 'system',
+      card_density TEXT NOT NULL DEFAULT 'comfortable',
+      open_in_new_tab INTEGER NOT NULL DEFAULT 1,
+      show_group_icons INTEGER NOT NULL DEFAULT 1,
+      search_engine TEXT NOT NULL DEFAULT 'bing',
+      weather_enabled INTEGER NOT NULL DEFAULT 1,
+      weather_auto_locate INTEGER NOT NULL DEFAULT 0,
+      temperature_unit TEXT NOT NULL DEFAULT 'system',
+      wallpaper_url TEXT,
+      wallpaper_overlay_opacity INTEGER NOT NULL DEFAULT 78,
+      wallpaper_blur INTEGER NOT NULL DEFAULT 0,
+      updated_at TEXT NOT NULL
+    )`,
+  ).run()
+
+  await env.DB.prepare(
     `CREATE TABLE IF NOT EXISTS user_profiles (
       subject TEXT PRIMARY KEY,
       display_name TEXT,
@@ -125,6 +169,9 @@ export async function ensureSettings(env: Env) {
       updated_at TEXT NOT NULL
     )`,
   ).run()
+
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_groups_sort_order ON groups(sort_order)').run()
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_links_group_sort ON links(group_id, sort_order)').run()
 
   try {
     await env.DB.prepare(

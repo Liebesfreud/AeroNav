@@ -1,4 +1,5 @@
 import { CSSProperties, ReactNode } from 'react'
+import { AppIcon } from '../AppIcon'
 import type { ThemeMode } from '../../lib/theme'
 import { SideNavBar } from './SideNavBar'
 
@@ -13,9 +14,12 @@ interface LayoutProps {
   onToggleEditMode: () => void;
   sidebarVisible: boolean;
   onToggleSidebar: () => void;
+  bootstrapLoading?: boolean;
+  bootstrapRefreshing?: boolean;
+  bootstrapError?: boolean;
 }
 
-export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpacity = 78, wallpaperBlur = 0, onToggleTheme, editMode, onToggleEditMode, sidebarVisible, onToggleSidebar }: LayoutProps) {
+export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpacity = 78, wallpaperBlur = 0, onToggleTheme, editMode, onToggleEditMode, sidebarVisible, onToggleSidebar, bootstrapLoading = false, bootstrapRefreshing = false, bootstrapError = false }: LayoutProps) {
   const wallpaperStyle = wallpaperUrl
     ? ({
         backgroundImage: `url("${encodeURI(wallpaperUrl)}")`,
@@ -42,7 +46,7 @@ export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpac
             onClick={onToggleSidebar}
             className="fixed left-6 top-6 z-40 hidden h-11 w-11 items-center justify-center rounded-xl border border-outline/70 bg-surface/90 text-on-surface-variant shadow-sm backdrop-blur transition-all duration-200 hover:bg-surface-container-low hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 md:flex dark:border-dark-outline/70 dark:bg-dark-surface/90 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/80 dark:hover:text-dark-on-background"
           >
-            <span className="material-symbols-outlined">menu</span>
+            <AppIcon name="menu" className="h-5 w-5" />
           </button>
         ) : null}
         <SideNavBar
@@ -53,8 +57,20 @@ export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpac
           visible={sidebarVisible}
           onToggleVisible={onToggleSidebar}
         />
-        <main className={`min-h-screen w-full transition-[padding] duration-200 ${sidebarVisible ? 'md:pl-24' : 'md:pl-0'}`}>
-          <div className="min-h-screen">{children}</div>
+        {bootstrapRefreshing ? (
+          <div className="pointer-events-none fixed inset-x-0 top-0 z-50 h-0.5 bg-primary/70 dark:bg-accent/70" aria-hidden="true" />
+        ) : null}
+        <main className={`min-h-screen w-full transition-[padding,opacity] duration-200 ${sidebarVisible ? 'md:pl-24' : 'md:pl-0'} ${bootstrapLoading ? 'opacity-80' : 'opacity-100'}`}>
+          {bootstrapError ? (
+            <div className="mx-auto flex min-h-screen w-full max-w-[32rem] items-center justify-center px-6 py-16 text-center">
+              <div className="space-y-3 rounded-2xl border border-outline bg-surface px-6 py-8 shadow-sm dark:border-dark-outline dark:bg-dark-surface">
+                <p className="font-headline text-xl font-semibold text-on-background dark:text-dark-on-background">AeroNav 加载失败</p>
+                <p className="text-sm text-on-surface-variant dark:text-dark-on-surface-variant">启动数据暂时不可用，请稍后刷新重试。</p>
+              </div>
+            </div>
+          ) : (
+            <div className="min-h-screen">{children}</div>
+          )}
         </main>
       </div>
     </div>

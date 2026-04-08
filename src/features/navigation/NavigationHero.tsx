@@ -1,3 +1,5 @@
+import { AppIcon } from '../../components/AppIcon'
+
 type WeatherState =
   | { mode: 'hidden' }
   | { mode: 'idle' | 'loading' | 'error'; message: string }
@@ -26,14 +28,14 @@ export function NavigationHero({
     : weather.mode === 'ready'
       ? (
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[17px] text-primary/70 dark:text-accent/80">{weather.data.icon}</span>
+            <AppIcon name={weather.data.icon} className="h-[17px] w-[17px] text-primary/70 dark:text-accent/80" />
             <span className="font-headline text-lg font-light text-on-background dark:text-dark-on-background">{Math.round(weather.data.temperature)}°{weather.data.unit}</span>
             <span className="font-label text-xs uppercase tracking-[0.18em] text-on-surface-variant dark:text-dark-on-surface-variant">{weather.data.locationName ? `${weather.data.locationName} / ${weather.data.condition}` : weather.data.condition}</span>
           </div>
         )
       : (
           <div className="flex items-center gap-2 text-on-surface-variant dark:text-dark-on-surface-variant">
-            <span className="material-symbols-outlined text-[17px] text-primary/60 dark:text-accent/70">routine</span>
+            <AppIcon name="routine" className="h-[17px] w-[17px] text-primary/60 dark:text-accent/70" />
             <span className="font-label text-xs uppercase tracking-[0.18em]">{weather.message}</span>
           </div>
         )

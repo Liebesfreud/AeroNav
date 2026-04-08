@@ -8,6 +8,7 @@ import { health } from './routes/health'
 import { reorderEntities } from './routes/reorder'
 import { updateUser } from './routes/user'
 import { getWeather } from './routes/weather'
+import { getIcon } from './routes/icon'
 
 function notFound() {
   throw new ApiError(404, 'NOT_FOUND', 'Route not found')
@@ -66,6 +67,9 @@ export default {
         }
         if (url.pathname === '/api/weather' && request.method === 'GET') {
           return await getWeather(request)
+        }
+        if (url.pathname === '/api/icon' && request.method === 'GET') {
+          return await getIcon(request)
         }
 
         notFound()

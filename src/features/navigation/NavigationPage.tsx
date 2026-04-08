@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api, ApiError, type Group, type GroupCreatePayload, type LinkCreatePayload, type LinkItem, type ReorderPayload } from '../../lib/api'
-import { useBootstrapCache, useBootstrapQuery } from '../../hooks/useBootstrap'
+import { useBootstrapCache } from '../../hooks/useBootstrap'
+import type { AppOutletContext } from '../../app/App'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { NavigationHero } from './NavigationHero'
 import { NavigationSearch } from './NavigationSearch'
@@ -95,7 +96,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 }
 
 export function NavigationPage() {
-  const { editMode } = useOutletContext<{ editMode: boolean }>()
+  const { editMode, bootstrapData } = useOutletContext<AppOutletContext>()
   const { update } = useBootstrapCache()
   const [search, setSearch] = useState('')
   const [linkDrawerOpen, setLinkDrawerOpen] = useState(false)
@@ -110,7 +111,7 @@ export function NavigationPage() {
   const [locationStatus, setLocationStatus] = useState<'idle' | 'locating' | 'ready' | 'denied' | 'unsupported' | 'error'>('idle')
   const searchRef = useRef<HTMLInputElement>(null)
 
-  const { data, isLoading } = useBootstrapQuery()
+  const data = bootstrapData
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -368,8 +369,6 @@ export function NavigationPage() {
   const handleSearchEngineChange = (next: 'google' | 'bing') => {
     updateSettingsMutation.mutate({ searchEngine: next })
   }
-
-  if (isLoading) return <div className="mt-32 flex h-full w-full items-center justify-center font-label text-xl tracking-widest text-on-surface-variant">正在加载 AeroNav...</div>
 
   return (
     <>

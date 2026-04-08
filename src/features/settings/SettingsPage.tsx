@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { api, ApiError, exportPayloadSchema, type Settings } from '../../lib/api'
+import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { applyTheme } from '../../lib/theme'
-import { useBootstrapCache, useBootstrapQuery } from '../../hooks/useBootstrap'
+import { useBootstrapCache } from '../../hooks/useBootstrap'
+import type { AppOutletContext } from '../../app/App'
 
 type SettingToggleCardProps = {
   icon: string
@@ -65,7 +68,7 @@ function SettingSection({
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 border-b border-outline pb-2 dark:border-dark-outline">
-        <span className="material-symbols-outlined text-[18px] text-primary dark:text-accent">{icon}</span>
+        <AppIcon name={icon} className="h-[18px] w-[18px] text-primary dark:text-accent" />
         <div className="min-w-0">
           <h2 className="font-headline text-lg font-normal tracking-tight text-on-background dark:text-dark-on-background sm:text-xl">{title}</h2>
         </div>
@@ -80,7 +83,7 @@ function SettingToggleCard({ icon, title, checked, disabled = false, onToggle }:
     <div className={`${sectionItemClassName} flex items-center justify-between gap-3`}>
       <div className="flex min-w-0 items-center gap-3">
         <div className={rowIconClassName}>
-          <span className="material-symbols-outlined text-[18px]">{icon}</span>
+          <AppIcon name={icon} className="h-[18px] w-[18px]" />
         </div>
         <div className="min-w-0">
           <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
@@ -111,7 +114,7 @@ function SegmentedControl<T extends string>({
     <div className={sectionItemClassName}>
       <div className="flex items-start gap-3">
         <div className={rowIconClassName}>
-          <span className="material-symbols-outlined text-[18px]">{icon}</span>
+          <AppIcon name={icon} className="h-[18px] w-[18px]" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
@@ -148,7 +151,7 @@ function NumberControl({
     <div className={sectionItemClassName}>
       <div className="flex items-start gap-3">
         <div className={rowIconClassName}>
-          <span className="material-symbols-outlined text-[18px]">{icon}</span>
+          <AppIcon name={icon} className="h-[18px] w-[18px]" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
@@ -230,8 +233,7 @@ export function SettingsPage() {
   const [wallpaperError, setWallpaperError] = useState<string | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const { update } = useBootstrapCache()
-
-  const { data, isLoading, isError } = useBootstrapQuery()
+  const { bootstrapData: data, bootstrapError: isError } = useOutletContext<AppOutletContext>()
 
   const updateSettings = useMutation({
     mutationFn: api.updateSettings,
@@ -330,10 +332,6 @@ export function SettingsPage() {
     importMutation.mutate(validated.data)
   }
 
-  if (isLoading) {
-    return <div className="flex items-center justify-center py-32 text-sm text-slate-500">正在加载设置...</div>
-  }
-
   if (isError || !data) {
     return <div className="flex items-center justify-center px-4 py-24 text-sm text-red-500">加载配置失败。</div>
   }
@@ -369,7 +367,7 @@ export function SettingsPage() {
                   className={`min-w-fit border-b-[2px] px-3.5 py-2.5 text-sm font-medium transition ${isActive ? 'border-primary text-on-background dark:border-accent dark:text-dark-on-background' : 'border-transparent text-on-surface-variant hover:text-on-background dark:text-dark-on-surface-variant dark:hover:text-dark-on-background'}`}
                 >
                   <span className="inline-flex items-center gap-2 whitespace-nowrap">
-                    <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
+                    <AppIcon name={tab.icon} className="h-[18px] w-[18px]" />
                     {tab.label}
                   </span>
                 </button>
@@ -385,7 +383,7 @@ export function SettingsPage() {
                   <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
                     <div className="flex items-center gap-3">
                       <div className="flex shrink-0 items-center justify-center text-primary dark:text-accent">
-                        <span className="material-symbols-outlined text-4xl">account_circle</span>
+                        <AppIcon name="account_circle" className="h-10 w-10" />
                       </div>
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-on-surface dark:text-dark-on-surface">{displayName}</p>

@@ -1,6 +1,8 @@
 import { useState, type CSSProperties, type DragEvent } from 'react'
+import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
 import type { Group, LinkItem } from '../../lib/api'
+import { getFaviconUrl } from '../../lib/favicon'
 
 type GroupSection = {
   group: Group
@@ -26,14 +28,6 @@ function getBrandColor(url: string | undefined, index: number) {
 
   const colors = ['bg-slate-700', 'bg-stone-700', 'bg-zinc-700', 'bg-neutral-700', 'bg-gray-700']
   return colors[index % colors.length]
-}
-
-function getFaviconUrl(url: string) {
-  try {
-    return `${new URL(url).origin}/favicon.ico`
-  } catch {
-    return null
-  }
 }
 
 function getTileClassName(tileSize: '1x1' | '1x3', density: 'compact' | 'comfortable') {
@@ -111,7 +105,7 @@ function LinkVisual({
   if (link.iconMode === 'material' && link.icon) {
     return (
       <div className={`${iconClassName} flex shrink-0 items-center justify-center rounded-2xl text-white ${brandColor}`}>
-        <span className={`material-symbols-outlined font-bold ${glyphClassName}`}>{link.icon}</span>
+        <AppIcon name={link.icon} className={glyphClassName} />
       </div>
     )
   }
@@ -200,7 +194,7 @@ export function LinkGrid({
           {editMode ? (
             <div className="mt-6 flex justify-center">
               <Button onClick={onCreateGroup}>
-                <span className="material-symbols-outlined mr-2 text-lg">create_new_folder</span>
+                <AppIcon name="create_new_folder" className="mr-2 h-5 w-5" />
                 创建分组
               </Button>
             </div>
@@ -219,7 +213,7 @@ export function LinkGrid({
             <p className="mt-1 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">点击卡片编辑，拖动卡片调整顺序。</p>
           </div>
           <Button variant="secondary" onClick={onCreateGroup}>
-            <span className="material-symbols-outlined mr-2 text-base">create_new_folder</span>
+            <AppIcon name="create_new_folder" className="mr-2 h-4 w-4" />
             新建分组
           </Button>
         </div>
@@ -236,7 +230,7 @@ export function LinkGrid({
                 <div className="flex min-w-0 items-center gap-3">
                   {group.icon ? (
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
-                      <span className="material-symbols-outlined text-[20px]">{group.icon}</span>
+                      <AppIcon name={group.icon} className="h-5 w-5" />
                     </div>
                   ) : null}
                   <div className="min-w-0">
@@ -355,7 +349,7 @@ export function LinkGrid({
                   {editMode ? (
                     <div className="mt-5 flex justify-center">
                       <Button variant="secondary" onClick={() => onCreateLink(group)}>
-                        <span className="material-symbols-outlined mr-2 text-base">add</span>
+                        <AppIcon name="add" className="mr-2 h-4 w-4" />
                         添加链接
                       </Button>
                     </div>

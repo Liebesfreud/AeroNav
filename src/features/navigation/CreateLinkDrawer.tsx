@@ -1,9 +1,11 @@
 import type { CSSProperties } from 'react'
 import type { Group } from '../../lib/api'
+import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
 import { Drawer } from '../../components/Drawer'
 import { Input } from '../../components/Input'
 import { Select } from '../../components/Select'
+import { getFaviconUrl } from '../../lib/favicon'
 
 export type LinkDraft = {
   title: string
@@ -21,14 +23,6 @@ export type LinkDraft = {
 
 const segmentShellClassName = 'flex flex-wrap gap-2'
 const sectionClassName = 'space-y-4 border-t border-outline pt-5 dark:border-dark-outline'
-
-function getFaviconUrl(url: string) {
-  try {
-    return `${new URL(url).origin}/favicon.ico`
-  } catch {
-    return null
-  }
-}
 
 function getPreviewStyle(backgroundColor: string): CSSProperties | undefined {
   if (!backgroundColor) return undefined
@@ -49,7 +43,7 @@ function LinkPreview({ draft }: { draft: LinkDraft }) {
     </div>
   ) : draft.iconMode === 'material' && draft.icon ? (
     <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background text-white dark:bg-dark-on-background dark:text-dark-background`}>
-      <span className={`material-symbols-outlined ${glyphClassName}`}>{draft.icon}</span>
+      <AppIcon name={draft.icon} className={glyphClassName} />
     </div>
   ) : draft.iconMode === 'text' ? (
     <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background font-bold text-white dark:bg-dark-on-background dark:text-dark-background ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
@@ -226,7 +220,7 @@ export function CreateLinkDrawer({
                       className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full p-1 text-on-surface-variant hover:bg-surface hover:text-on-surface dark:text-dark-on-surface-variant dark:hover:bg-dark-surface dark:hover:text-dark-on-surface"
                       title="恢复默认"
                     >
-                      <span className="material-symbols-outlined text-[16px]">close</span>
+                      <AppIcon name="close" className="text-[16px]" />
                     </button>
                   ) : null}
                 </div>

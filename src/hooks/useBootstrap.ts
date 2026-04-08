@@ -4,7 +4,14 @@ import { api, type BootstrapData } from '../lib/api'
 export const bootstrapQueryKey = ['bootstrap'] as const
 
 export function useBootstrapQuery() {
-  return useQuery({ queryKey: bootstrapQueryKey, queryFn: api.bootstrap })
+  return useQuery({
+    queryKey: bootstrapQueryKey,
+    queryFn: api.bootstrap,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    placeholderData: (previousData) => previousData,
+    refetchOnMount: false,
+  })
 }
 
 export function updateBootstrapCache(

@@ -1,5 +1,8 @@
+import type { ReactNode } from 'react'
+import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
 import { PageContainer } from '../../components/layout/PageContainer'
+
 
 type BookmarkCardProps = {
   icon: string
@@ -85,13 +88,13 @@ function SectionHeading({
   icon: string
   title: string
   meta?: string
-  action?: React.ReactNode
+  action?: ReactNode
 }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-outline/50 pb-4 dark:border-dark-outline/60">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
-          <span className="material-symbols-outlined text-[20px]">{icon}</span>
+          <AppIcon name={icon} className="h-5 w-5" />
         </div>
         <div>
           <h2 className="font-headline text-2xl font-semibold tracking-tight text-on-background dark:text-dark-on-background">{title}</h2>
@@ -111,7 +114,7 @@ function BookmarkCard({ icon, title, description, domain }: BookmarkCardProps) {
           <img alt={title} className="h-8 w-8 object-contain grayscale transition-all group-hover:grayscale-0" src={icon} />
         </div>
         <button className="flex h-9 w-9 items-center justify-center rounded-xl text-on-surface-variant transition hover:bg-surface-container-low hover:text-primary dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/80 dark:hover:text-accent">
-          <span className="material-symbols-outlined text-lg">edit_note</span>
+          <AppIcon name="edit_note" className="h-[18px] w-[18px]" />
         </button>
       </div>
       <h3 className="text-lg font-semibold text-on-surface transition-colors group-hover:text-primary dark:text-dark-on-surface dark:group-hover:text-accent">{title}</h3>
@@ -127,13 +130,13 @@ function BookmarkRow({ icon, title, detail }: BookmarkRowProps) {
     <div className="group relative flex items-center gap-4 rounded-xl border border-transparent px-4 py-4 transition hover:bg-surface-container-low/80 dark:hover:bg-dark-surface-container/55">
       <a className="absolute inset-0 rounded-xl" href="#" aria-label={title}></a>
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
-        <span className="material-symbols-outlined">{icon}</span>
+        <AppIcon name={icon} className="h-5 w-5" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
         <p className="mt-1 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">{detail}</p>
       </div>
-      <span className="material-symbols-outlined text-sm text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">north_east</span>
+      <AppIcon name="north_east" className="h-4 w-4 text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent" />
     </div>
   )
 }
@@ -151,7 +154,7 @@ function BookmarkMediaCard({ title, description, domain, imageUrl }: BookmarkMed
         <p className="mt-2 text-sm leading-6 text-on-surface-variant dark:text-dark-on-surface-variant">{description}</p>
         <div className="mt-5 flex items-center justify-between">
           <span className="text-[10px] font-semibold tracking-[0.16em] text-on-surface-variant/80 dark:text-dark-on-surface-variant/80">{domain}</span>
-          <span className="material-symbols-outlined text-base text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent">arrow_forward</span>
+          <AppIcon name="arrow_forward" className="h-4 w-4 text-on-surface-variant transition-colors group-hover:text-primary dark:text-dark-on-surface-variant dark:group-hover:text-accent" />
         </div>
       </div>
     </div>
@@ -162,7 +165,7 @@ function BookmarkShortcut({ icon, title, category }: BookmarkShortcutProps) {
   return (
     <a href="#" className="group flex items-center gap-4 rounded-xl border border-outline/45 bg-surface/68 p-4 transition hover:bg-surface/92 dark:border-dark-outline/55 dark:bg-dark-surface-elevated/72">
       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-container-low text-primary transition-colors group-hover:bg-primary group-hover:text-white dark:bg-dark-surface-container/70 dark:text-accent dark:group-hover:bg-accent dark:group-hover:text-slate-950">
-        <span className="material-symbols-outlined text-lg">{icon}</span>
+        <AppIcon name={icon} className="h-[18px] w-[18px]" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
@@ -187,11 +190,11 @@ export function BookmarksPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Button variant="secondary">
-                <span className="material-symbols-outlined mr-2 align-[-4px] text-[18px]">folder_open</span>
+                <AppIcon name="folder_open" className="mr-2 inline h-[18px] w-[18px] align-[-4px]" />
                 整理分组
               </Button>
               <Button>
-                <span className="material-symbols-outlined mr-2 align-[-4px] text-[18px]">add</span>
+                <AppIcon name="add" className="mr-2 inline h-[18px] w-[18px] align-[-4px]" />
                 新建收藏
               </Button>
             </div>
@@ -230,10 +233,10 @@ export function BookmarksPage() {
             action={
               <div className="flex gap-2">
                 <button className="flex h-10 w-10 items-center justify-center rounded-2xl border border-outline/70 bg-surface-container-low text-on-surface-variant transition hover:bg-surface-container hover:text-on-surface dark:border-dark-outline/70 dark:bg-dark-surface-container/60 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-dark-on-surface">
-                  <span className="material-symbols-outlined text-sm">chevron_left</span>
+                  <AppIcon name="chevron_left" className="h-4 w-4" />
                 </button>
                 <button className="flex h-10 w-10 items-center justify-center rounded-2xl border border-outline/70 bg-surface-container-low text-on-surface-variant transition hover:bg-surface-container hover:text-on-surface dark:border-dark-outline/70 dark:bg-dark-surface-container/60 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container dark:hover:text-dark-on-surface">
-                  <span className="material-symbols-outlined text-sm">chevron_right</span>
+                  <AppIcon name="chevron_right" className="h-4 w-4" />
                 </button>
               </div>
             }
@@ -259,7 +262,7 @@ export function BookmarksPage() {
         </section>
 
         <button className="fixed bottom-10 right-10 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-on-background text-white shadow-xl transition hover:scale-105 hover:bg-primary dark:bg-dark-surface dark:text-dark-on-background dark:hover:bg-accent dark:hover:text-slate-950">
-          <span className="material-symbols-outlined text-2xl">edit</span>
+          <AppIcon name="edit" className="h-6 w-6" />
         </button>
       </div>
     </PageContainer>

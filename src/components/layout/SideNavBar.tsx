@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { AppIcon } from '../AppIcon'
 import type { ThemeMode } from '../../lib/theme'
 import { navigationItems } from './navigationItems'
 
@@ -26,7 +27,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
           onClick={onToggleVisible}
           className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-surface-container-low hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background"
         >
-          <span className="material-symbols-outlined">left_panel_close</span>
+          <AppIcon name="left_panel_close" className="h-5 w-5" />
         </button>
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-container-low text-sm font-semibold tracking-[0.18em] text-on-background dark:bg-dark-surface-container/70 dark:text-dark-on-background">
           AN
@@ -41,7 +42,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
                 aria-label={item.name}
                 className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 ${isActive ? 'bg-on-background text-white dark:bg-dark-on-background dark:text-dark-background' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
               >
-                <span className="material-symbols-outlined" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>{item.icon}</span>
+                <AppIcon name={item.icon} className="h-5 w-5" />
               </Link>
             )
           })}
@@ -54,7 +55,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
             onClick={onToggleTheme}
             className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-surface-container-low hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background"
           >
-            <span className="material-symbols-outlined">{themeMode === 'dark' ? 'light_mode' : 'dark_mode'}</span>
+            <AppIcon name={themeMode === 'dark' ? 'light_mode' : 'dark_mode'} className="h-5 w-5" />
           </button>
           <button
             type="button"
@@ -63,7 +64,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
             onClick={onToggleEditMode}
             className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 ${editMode ? 'bg-surface-container-low text-primary dark:bg-dark-surface-container dark:text-accent' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
           >
-            <span className="material-symbols-outlined" style={editMode ? { fontVariationSettings: "'FILL' 1" } : {}}>edit_square</span>
+            <AppIcon name="edit_square" className="h-5 w-5" />
           </button>
         </div>
       </div>
