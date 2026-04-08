@@ -68,7 +68,7 @@ function SettingSection({
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 border-b border-outline pb-2 dark:border-dark-outline">
-        <AppIcon name={icon} className="h-[18px] w-[18px] text-primary dark:text-accent" />
+        <AppIcon name={icon} className="h-[18px] w-[18px] text-primary dark:text-primary" />
         <div className="min-w-0">
           <h2 className="font-headline text-lg font-normal tracking-tight text-on-background dark:text-dark-on-background sm:text-xl">{title}</h2>
         </div>
@@ -125,7 +125,7 @@ function SegmentedControl<T extends string>({
                 type="button"
                 disabled={disabled}
                 onClick={() => onChange(option.value)}
-                className={`rounded-lg border px-3 py-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-40 ${value === option.value ? 'bg-on-background text-white border-on-background dark:bg-dark-on-background dark:text-dark-background dark:border-dark-on-background' : 'bg-transparent border-outline text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant dark:border-dark-outline dark:text-dark-on-surface-variant dark:hover:text-dark-on-surface dark:hover:border-dark-on-surface-variant'}`}
+                className={`rounded-xl border px-3 py-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-40 ${value === option.value ? 'bg-on-background text-white border-on-background dark:bg-dark-on-background dark:text-dark-background dark:border-dark-on-background' : 'bg-transparent border-outline text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant dark:border-dark-outline dark:text-dark-on-surface-variant dark:hover:text-dark-on-surface dark:hover:border-dark-on-surface-variant'}`}
               >
                 {option.label}
               </button>
@@ -382,7 +382,7 @@ export function SettingsPage() {
                 <>
                   <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
                     <div className="flex items-center gap-3">
-                      <div className="flex shrink-0 items-center justify-center text-primary dark:text-accent">
+                      <div className="flex shrink-0 items-center justify-center text-primary dark:text-primary">
                         <AppIcon name="user-circle" className="h-10 w-10" />
                       </div>
                       <div className="min-w-0">

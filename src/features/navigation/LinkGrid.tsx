@@ -1,7 +1,6 @@
 import { useState, type CSSProperties, type DragEvent } from 'react'
 import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
-import { NamedIcon } from '../../components/NamedIcon'
 import type { Group, LinkItem } from '../../lib/api'
 import { getFaviconUrl } from '../../lib/favicon'
 
@@ -10,25 +9,12 @@ type GroupSection = {
   links: LinkItem[]
 }
 
-function renderTextFallback(text: string, colorClass: string, sizeClass: string, textClassName = 'text-sm') {
+function renderTextFallback(text: string, sizeClass: string, textClassName = 'text-sm') {
   return (
-    <div className={`${sizeClass} flex items-center justify-center rounded-2xl font-bold text-white ${colorClass} ${textClassName}`}>
+    <div className={`${sizeClass} flex items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-primary ${textClassName} font-bold`}>
       {text.trim().slice(0, 2).toUpperCase() || '?'}
     </div>
   )
-}
-
-function getBrandColor(url: string | undefined, index: number) {
-  const str = (url || '').toLowerCase()
-  if (str.includes('youtube')) return 'bg-red-500'
-  if (str.includes('twitter') || str.includes('x.com')) return 'bg-slate-700'
-  if (str.includes('discord')) return 'bg-indigo-500'
-  if (str.includes('github')) return 'bg-slate-800'
-  if (str.includes('figma')) return 'bg-purple-500'
-  if (str.includes('spotify')) return 'bg-emerald-600'
-
-  const colors = ['bg-slate-700', 'bg-stone-700', 'bg-zinc-700', 'bg-neutral-700', 'bg-gray-700']
-  return colors[index % colors.length]
 }
 
 function getTileClassName(tileSize: '1x1' | '1x3', density: 'compact' | 'comfortable') {
@@ -69,14 +55,12 @@ function reorderIds(ids: string[], activeId: string, overId: string) {
 
 function LinkVisual({
   link,
-  index,
   iconClassName,
   glyphClassName,
   imagePaddingClassName,
   fallbackTextClassName,
 }: {
   link: LinkItem
-  index: number
   iconClassName: string
   glyphClassName: string
   imagePaddingClassName: string
@@ -86,11 +70,12 @@ function LinkVisual({
   const [imageFailed, setImageFailed] = useState(false)
   const faviconUrl = getFaviconUrl(link.url)
   const fallbackText = link.iconText || link.title.slice(0, 2) || '?'
-  const brandColor = getBrandColor(link.url, index)
+  const iconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-container-low dark:bg-dark-surface-container/70`
+  const faviconClassName = `${iconClassName} shrink-0 object-contain ${imagePaddingClassName}`
 
   if (link.iconMode === 'image' && link.iconImageUrl && !imageFailed) {
     return (
-      <div className={`${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-2xl`}>
+      <div className={iconFrameClassName}>
         <img
           src={link.iconImageUrl}
           alt=""
@@ -105,32 +90,30 @@ function LinkVisual({
 
   if (link.iconMode === 'material' && link.icon) {
     return (
-      <div className={`${iconClassName} flex shrink-0 items-center justify-center rounded-2xl text-white ${brandColor}`}>
-        <NamedIcon name={link.icon} className={`${glyphClassName} h-full w-full object-contain p-1.5`} />
+      <div className={iconFrameClassName}>
+        <AppIcon name={link.icon} className={`${glyphClassName} text-primary dark:text-primary`} />
       </div>
     )
   }
 
   if (link.iconMode === 'text') {
-    return renderTextFallback(fallbackText, brandColor, `${iconClassName} shrink-0`, fallbackTextClassName)
+    return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
   }
 
   if (faviconUrl && !faviconFailed) {
     return (
-      <div className={`${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-2xl`}>
-        <img
-          src={faviconUrl}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          onError={() => setFaviconFailed(true)}
-          className={`h-full w-full object-contain ${imagePaddingClassName}`}
-        />
-      </div>
+      <img
+        src={faviconUrl}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        onError={() => setFaviconFailed(true)}
+        className={faviconClassName}
+      />
     )
   }
 
-  return renderTextFallback(fallbackText, brandColor, `${iconClassName} shrink-0`, fallbackTextClassName)
+  return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
 }
 
 export function LinkGrid({
@@ -230,8 +213,8 @@ export function LinkGrid({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                   {group.icon ? (
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-accent">
-                      <NamedIcon name={group.icon} className="h-5 w-5 object-contain" />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-primary">
+                      <AppIcon name={group.icon} className="h-5 w-5" />
                     </div>
                   ) : null}
                   <div className="min-w-0">
@@ -266,7 +249,7 @@ export function LinkGrid({
                     minWidth: '0',
                   }}
                 >
-                  {links.map((link, linkIndex) => {
+                  {links.map((link) => {
                     const iconOnly = link.tileSize === '1x1'
                     const iconClassName = cardDensity === 'compact' ? 'h-12 w-12' : 'h-14 w-14'
                     const glyphClassName = cardDensity === 'compact' ? 'text-[2.15rem]' : 'text-[2.4rem]'
@@ -280,7 +263,6 @@ export function LinkGrid({
                     const content = iconOnly ? (
                       <LinkVisual
                         link={link}
-                        index={linkIndex}
                         iconClassName={iconClassName}
                         glyphClassName={glyphClassName}
                         imagePaddingClassName={imagePaddingClassName}
@@ -290,7 +272,6 @@ export function LinkGrid({
                       <>
                         <LinkVisual
                           link={link}
-                          index={linkIndex}
                           iconClassName={cardDensity === 'compact' ? 'h-10 w-10' : 'h-11 w-11'}
                           glyphClassName={cardDensity === 'compact' ? 'text-[1.8rem]' : 'text-[2rem]'}
                           imagePaddingClassName={imagePaddingClassName}

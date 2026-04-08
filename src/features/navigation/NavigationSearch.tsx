@@ -44,7 +44,7 @@ export const NavigationSearch = forwardRef<HTMLInputElement, {
 }>(function NavigationSearch({ value, searchEngine, onChange, onSearchEngineChange, onSearchWeb }, ref) {
   return (
     <div className="mx-auto w-full max-w-[60rem]">
-      <div className="flex items-center rounded-2xl border border-outline/70 bg-surface/85 px-2.5 py-1.5 shadow-[0_8px_24px_-22px_rgba(0,0,0,0.45)] transition-all duration-300 focus-within:border-[#99462a]/20 focus-within:ring-2 focus-within:ring-[#99462a]/10 sm:px-3 dark:border-dark-outline/80 dark:bg-dark-surface-elevated/90 dark:shadow-[0_12px_28px_-20px_rgba(0,0,0,0.8)]">
+      <div className="flex items-center rounded-xl border border-outline/70 bg-surface/85 px-2.5 py-1.5 shadow-[0_8px_24px_-22px_rgba(0,0,0,0.45)] transition-all duration-300 focus-within:border-[#99462a]/20 focus-within:ring-2 focus-within:ring-[#99462a]/10 sm:px-3 dark:border-dark-outline/80 dark:bg-dark-surface-elevated/90 dark:shadow-[0_12px_28px_-20px_rgba(0,0,0,0.8)]">
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-surface-container-low px-3 py-1.5 text-on-surface-variant dark:bg-dark-surface-container dark:text-dark-on-surface-variant">
           <SearchEngineLogo searchEngine={searchEngine} />
           <Select

@@ -62,7 +62,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
             aria-label="切换编辑模式"
             aria-pressed={editMode}
             onClick={onToggleEditMode}
-            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 ${editMode ? 'bg-surface-container-low text-primary dark:bg-dark-surface-container dark:text-accent' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 ${editMode ? 'bg-surface-container-low text-primary dark:bg-dark-surface-container dark:text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
           >
             <AppIcon name="pencil-cog" className="h-5 w-5" />
           </button>

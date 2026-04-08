@@ -386,7 +386,7 @@ export function NavigationPage() {
             />
           </div>
           {!hasSearchResults && query ? (
-            <div className="rounded-[1.5rem] border border-dashed border-outline/70 bg-surface/70 px-5 py-6 text-sm text-on-surface-variant dark:border-dark-outline/80 dark:bg-dark-surface-elevated/76 dark:text-dark-on-surface-variant">
+                    <div className="rounded-xl border border-dashed border-outline/70 bg-surface/70 px-5 py-6 text-sm text-on-surface-variant dark:border-dark-outline/80 dark:bg-dark-surface-elevated/76 dark:text-dark-on-surface-variant">
               没找到匹配的链接。按回车或点击搜索可直接搜索互联网。
             </div>
           ) : null}

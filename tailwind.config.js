@@ -40,13 +40,14 @@ export default {
         }
       },
       borderRadius: {
-        DEFAULT: "0.5rem",
-        lg: "0.75rem",
+        DEFAULT: "1rem",
+        lg: "1rem",
         xl: "1rem",
+        '2xl': '1rem',
         full: "9999px",
-        xl2: '1.25rem',
-        squirle: '24px',
-        app: '20px'
+        xl2: '1rem',
+        squirle: '1rem',
+        app: '1rem'
       },
       fontFamily: {
         headline: ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],

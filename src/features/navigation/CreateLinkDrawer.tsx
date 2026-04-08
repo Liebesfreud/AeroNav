@@ -4,7 +4,6 @@ import { AppIcon } from '../../components/AppIcon'
 import { Button } from '../../components/Button'
 import { Drawer } from '../../components/Drawer'
 import { Input } from '../../components/Input'
-import { NamedIcon } from '../../components/NamedIcon'
 import { Select } from '../../components/Select'
 import { getFaviconUrl } from '../../lib/favicon'
 
@@ -33,28 +32,28 @@ function getPreviewStyle(backgroundColor: string): CSSProperties | undefined {
 function LinkPreview({ draft }: { draft: LinkDraft }) {
   const iconOnly = draft.tileSize === '1x1'
   const faviconUrl = getFaviconUrl(draft.url)
-  const iconClassName = iconOnly ? 'h-full w-full' : 'h-[74%] w-[74%]'
+  const iconClassName = iconOnly ? 'h-[82%] w-[82%]' : 'h-[74%] w-[74%]'
+  const iconFrameClassName = `${iconClassName} flex items-center justify-center overflow-hidden rounded-xl bg-surface-container-low/70 dark:bg-dark-surface-container/70`
+  const faviconClassName = `${iconClassName} object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`
   const fallbackText = (draft.iconText || draft.title || '?').trim().slice(0, 2).toUpperCase() || '?'
   const cardStyle = getPreviewStyle(draft.backgroundColor)
 
   const visual = draft.iconMode === 'image' && draft.iconImageUrl ? (
-    <div className={`${iconClassName} flex items-center justify-center overflow-hidden rounded-2xl bg-surface-container-low/70 dark:bg-dark-surface-container/70`}>
+    <div className={iconFrameClassName}>
       <img src={draft.iconImageUrl} alt="" aria-hidden="true" className={`h-full w-full object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`} />
     </div>
   ) : draft.iconMode === 'material' && draft.icon ? (
-    <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background text-white dark:bg-dark-on-background dark:text-dark-background`}>
-      <NamedIcon name={draft.icon} className={`h-full w-full object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`} />
+    <div className={iconFrameClassName}>
+      <AppIcon name={draft.icon} className={`${iconOnly ? 'h-[70%] w-[70%]' : 'h-[60%] w-[60%]'} text-primary dark:text-primary`} />
     </div>
   ) : draft.iconMode === 'text' ? (
-    <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background font-bold text-white dark:bg-dark-on-background dark:text-dark-background ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
+    <div className={`${iconFrameClassName} font-bold text-primary dark:text-primary ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
       {fallbackText}
     </div>
   ) : faviconUrl ? (
-    <div className={`${iconClassName} flex items-center justify-center overflow-hidden rounded-2xl bg-surface-container-low/70 dark:bg-dark-surface-container/70`}>
-      <img src={faviconUrl} alt="" aria-hidden="true" className={`h-full w-full object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`} />
-    </div>
+    <img src={faviconUrl} alt="" aria-hidden="true" className={faviconClassName} />
   ) : (
-    <div className={`${iconClassName} flex items-center justify-center rounded-2xl bg-on-background font-bold text-white dark:bg-dark-on-background dark:text-dark-background ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
+    <div className={`${iconFrameClassName} font-bold text-primary dark:text-primary ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
       {fallbackText}
     </div>
   )
@@ -99,7 +98,7 @@ function SegmentedControl<T extends string>({
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
-          className={`rounded-lg border px-3 py-2 text-sm transition ${value === option.value ? 'bg-on-background text-white border-on-background dark:bg-dark-on-background dark:text-dark-background dark:border-dark-on-background' : 'bg-transparent border-outline text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant dark:border-dark-outline dark:text-dark-on-surface-variant dark:hover:text-dark-on-surface dark:hover:border-dark-on-surface-variant'}`}
+          className={`rounded-xl border px-3 py-2 text-sm transition ${value === option.value ? 'bg-on-background text-white border-on-background dark:bg-dark-on-background dark:text-dark-background dark:border-dark-on-background' : 'bg-transparent border-outline text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant dark:border-dark-outline dark:text-dark-on-surface-variant dark:hover:text-dark-on-surface dark:hover:border-dark-on-surface-variant'}`}
         >
           {option.label}
         </button>
@@ -228,7 +227,7 @@ export function CreateLinkDrawer({
                   type="color"
                   value={draft.backgroundColor || '#f8fafc'}
                   onChange={(event) => setDraft((current) => ({ ...current, backgroundColor: event.target.value }))}
-                  className="h-[38px] w-10 shrink-0 cursor-pointer rounded-lg border border-outline bg-surface p-0.5 dark:border-dark-outline dark:bg-dark-surface"
+                  className="h-[38px] w-10 shrink-0 cursor-pointer rounded-xl border border-outline bg-surface p-0.5 dark:border-dark-outline dark:bg-dark-surface"
                 />
               </div>
             </div>

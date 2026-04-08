@@ -1,4 +1,5 @@
-import type { SVGProps } from 'react'
+import { useState, type SVGProps } from 'react'
+import { Icon as IconifyIcon } from '@iconify/react'
 import type { Icon, IconProps } from '@tabler/icons-react'
 import {
   IconAperture,
@@ -90,6 +91,7 @@ const iconMap: Record<string, Icon> = {
   menu: IconMenu2,
   menu_2: IconMenu2,
   'menu-2': IconMenu2,
+  moon: IconMoon,
   my_location: IconLocation,
   north_east: IconArrowUpRight,
   opacity: IconDroplet,
@@ -104,6 +106,7 @@ const iconMap: Record<string, Icon> = {
   search: IconSearch,
   settings: IconSettings,
   snowing: IconCloudSnow,
+  sun: IconSun,
   sunny: IconSun,
   thunderstorm: IconCloudStorm,
   travel_explore: IconCompass,
@@ -129,8 +132,54 @@ type AppIconProps = Omit<IconProps, 'ref'> & {
 }
 
 export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconProps) {
-  const IconComponent = resolveIcon(name, fallback)
-  return <IconComponent aria-hidden="true" stroke={1.8} {...props} />
+  const {
+    className,
+    stroke: _stroke,
+    color,
+    width,
+    height,
+    style,
+    onClick,
+    role,
+    tabIndex,
+    ...restProps
+  } = props
+  const trimmedName = name?.trim()
+  const mappedIcon = trimmedName ? iconMap[trimmedName] ?? iconMap[trimmedName.replace(/-/g, '_')] : null
+  const [iconifyFailed, setIconifyFailed] = useState(false)
+
+  if (trimmedName && !mappedIcon && !iconifyFailed) {
+    return (
+      <span
+        aria-hidden="true"
+        onErrorCapture={() => setIconifyFailed(true)}
+        className="inline-flex items-center justify-center"
+      >
+        <IconifyIcon
+          icon={trimmedName}
+          color={typeof color === 'string' ? color : undefined}
+          width={typeof width === 'string' || typeof width === 'number' ? width : undefined}
+          height={typeof height === 'string' || typeof height === 'number' ? height : undefined}
+          style={style}
+          onClick={onClick}
+          role={role}
+          tabIndex={tabIndex}
+          className={["text-primary dark:text-primary", className].filter(Boolean).join(' ')}
+        />
+      </span>
+    )
+  }
+
+  const IconComponent = resolveIcon(trimmedName, fallback)
+
+  return (
+    <IconComponent
+      aria-hidden="true"
+      stroke={1.8}
+      className={["text-primary dark:text-primary", className].filter(Boolean).join(' ')}
+      {...restProps}
+    />
+  )
 }
 
 export function IconSpan({ children, ...props }: SVGProps<SVGSVGElement> & { children: string | null | undefined }) {

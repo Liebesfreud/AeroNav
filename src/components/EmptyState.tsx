@@ -10,7 +10,7 @@ export function EmptyState({
   action?: ReactNode
 }) {
   return (
-    <div className="rounded-[2rem] border border-dashed border-slate-300 bg-white/80 p-8 text-center shadow-card dark:border-slate-800 dark:bg-slate-900/70">
+    <div className="rounded-xl border border-dashed border-slate-300 bg-white/80 p-8 text-center shadow-card dark:border-slate-800 dark:bg-slate-900/70">
       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-100 text-accent-700 dark:bg-accent-950 dark:text-accent-300">
         ✦
       </div>

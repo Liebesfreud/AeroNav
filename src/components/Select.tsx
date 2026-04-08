@@ -48,7 +48,7 @@ export function Select<T extends string = string>({
         <SelectPrimitive.Content
           position="popper"
           sideOffset={8}
-          className={`z-50 overflow-hidden rounded-2xl border border-outline/70 bg-surface p-1 shadow-[0_18px_46px_-30px_rgba(15,23,42,0.3)] dark:border-dark-outline/70 dark:bg-dark-surface-elevated ${contentClassName}`}
+          className={`z-50 overflow-hidden rounded-xl border border-outline/70 bg-surface p-1 shadow-[0_18px_46px_-30px_rgba(15,23,42,0.3)] dark:border-dark-outline/70 dark:bg-dark-surface-elevated ${contentClassName}`}
         >
           <SelectPrimitive.Viewport className="min-w-[var(--radix-select-trigger-width)] p-1">
             {options.map((option) => (
@@ -59,7 +59,7 @@ export function Select<T extends string = string>({
                 className="relative flex min-h-10 cursor-pointer select-none items-center rounded-xl py-2 pl-3 pr-9 text-sm text-on-surface outline-none transition data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-surface-container-low data-[highlighted]:text-on-background dark:text-dark-on-surface dark:data-[highlighted]:bg-dark-surface-container/80 dark:data-[highlighted]:text-dark-on-background"
               >
                 <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
-                <SelectPrimitive.ItemIndicator className="absolute right-3 inline-flex items-center text-primary dark:text-accent">
+                <SelectPrimitive.ItemIndicator className="absolute right-3 inline-flex items-center text-primary dark:text-primary">
                   <AppIcon name="checks" className="h-[18px] w-[18px]" />
                 </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
