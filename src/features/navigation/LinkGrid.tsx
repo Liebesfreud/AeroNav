@@ -17,14 +17,6 @@ function renderTextFallback(text: string, sizeClass: string, textClassName = 'te
   )
 }
 
-function renderPlainTextFallback(text: string, sizeClass: string, textClassName = 'text-sm') {
-  return (
-    <div className={`${sizeClass} flex items-center justify-center text-primary dark:text-primary ${textClassName} font-bold`}>
-      {text.trim().slice(0, 2).toUpperCase() || '?'}
-    </div>
-  )
-}
-
 function getTileClassName(tileSize: '1x1' | '1x3', density: 'compact' | 'comfortable') {
   if (tileSize === '1x1') {
     return density === 'compact'
@@ -120,7 +112,7 @@ function LinkVisual({
   }
 
   if (link.iconMode === 'favicon' || link.iconMode === 'image') {
-    return renderPlainTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
+    return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
   }
 
   return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)

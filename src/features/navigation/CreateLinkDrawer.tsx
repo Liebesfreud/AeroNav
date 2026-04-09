@@ -37,23 +37,23 @@ function LinkPreview({ draft }: { draft: LinkDraft }) {
   const faviconClassName = `${iconClassName} object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`
   const fallbackText = (draft.iconText || draft.title || '?').trim().slice(0, 2).toUpperCase() || '?'
   const cardStyle = getPreviewStyle(draft.backgroundColor)
+  const plainTextClassName = `${iconClassName} flex items-center justify-center font-bold text-primary dark:text-primary ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`
+  const framedTextClassName = `${iconFrameClassName} font-bold text-primary dark:text-primary ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`
 
   const visual = draft.iconMode === 'image' && draft.iconImageUrl ? (
-    <div className={iconFrameClassName}>
-      <img src={draft.iconImageUrl} alt="" aria-hidden="true" className={`h-full w-full object-contain ${iconOnly ? 'p-[8%]' : 'p-2.5'}`} />
-    </div>
+    <img src={draft.iconImageUrl} alt="" aria-hidden="true" className={`h-full w-full object-contain ${iconClassName} ${iconOnly ? 'p-[8%]' : 'p-2.5'}`} />
   ) : draft.iconMode === 'material' && draft.icon ? (
     <div className={iconFrameClassName}>
       <AppIcon name={draft.icon} className={`${iconOnly ? 'h-[70%] w-[70%]' : 'h-[60%] w-[60%]'} text-primary dark:text-primary`} />
     </div>
   ) : draft.iconMode === 'text' ? (
-    <div className={`${iconFrameClassName} font-bold text-primary dark:text-primary ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
+    <div className={plainTextClassName}>
       {fallbackText}
     </div>
   ) : faviconUrl ? (
     <img src={faviconUrl} alt="" aria-hidden="true" className={faviconClassName} />
   ) : (
-    <div className={`${iconFrameClassName} font-bold text-primary dark:text-primary ${iconOnly ? 'text-[1.4rem]' : 'text-sm'}`}>
+    <div className={framedTextClassName}>
       {fallbackText}
     </div>
   )
