@@ -5,6 +5,12 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './app/router'
 import './styles.css'
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js')
+  })
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

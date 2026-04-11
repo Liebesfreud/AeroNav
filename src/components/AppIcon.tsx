@@ -1,6 +1,5 @@
 import { useState, type SVGProps } from 'react'
 import type { Icon, IconProps } from '@tabler/icons-react'
-import * as TablerIcons from '@tabler/icons-react'
 import { getNamedIconUrl } from '../lib/favicon'
 import {
   IconAperture,
@@ -120,46 +119,12 @@ const iconMap: Record<string, Icon> = {
   x: IconX,
 }
 
-const tablerExports = TablerIcons as Record<string, unknown>
-
-function isTablerIcon(value: unknown): value is Icon {
-  if (typeof value !== 'function') return false
-  const iconCandidate = value as unknown as Record<string, unknown>
-  if ('displayName' in iconCandidate) return true
-  if ('iconNode' in iconCandidate) return true
-  if (typeof iconCandidate.render === 'function') return true
-  return false
-}
-
-function toTablerExportName(name: string) {
-  const normalized = name
-    .trim()
-    .replace(/^icon(?=[A-Z0-9])/, '')
-    .replace(/^icon[-_\s]+/i, '')
-    .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
-    .split(/[^a-zA-Z0-9]+|(?<=[a-z0-9])(?=[A-Z])/)
-    .filter(Boolean)
-    .map((part) => part[0].toUpperCase() + part.slice(1).toLowerCase())
-    .join('')
-
-  return normalized ? `Icon${normalized}` : ''
-}
-
 function resolveIcon(name: string | null | undefined, fallback: Icon) {
   const key = name?.trim()
   if (!key) return fallback
 
   const mapped = iconMap[key] ?? iconMap[key.replace(/-/g, '_')]
-  if (mapped) return mapped
-
-  const direct = tablerExports[key]
-  if (isTablerIcon(direct)) return direct
-
-  const normalizedKey = toTablerExportName(key)
-  if (!normalizedKey) return fallback
-
-  const normalized = tablerExports[normalizedKey]
-  return isTablerIcon(normalized) ? normalized : fallback
+  return mapped ?? fallback
 }
 
 type AppIconProps = Omit<IconProps, 'ref'> & {
