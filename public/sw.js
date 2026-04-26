@@ -1,4 +1,4 @@
-const VERSION = 'aeronav-static-v1'
+const VERSION = 'aeronav-static-v2'
 const RUNTIME_CACHE = `runtime-${VERSION}`
 const ICON_CACHE = `icons-${VERSION}`
 const FONT_CACHE = `fonts-${VERSION}`
@@ -63,10 +63,5 @@ self.addEventListener('fetch', (event) => {
 
   if (isGoogleFont(url)) {
     event.respondWith(staleWhileRevalidate(request, FONT_CACHE))
-    return
-  }
-
-  if (url.origin === self.location.origin && request.destination === 'document') {
-    event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE))
   }
 })

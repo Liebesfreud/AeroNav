@@ -19,6 +19,34 @@ function getIdFromPath(pathname: string) {
   return segments.at(-1) ?? ''
 }
 
+const STATIC_ASSET_PREFIXES = ['/assets/']
+const STATIC_ASSET_PATHS = new Set([
+  '/favicon.ico',
+  '/manifest.webmanifest',
+  '/robots.txt',
+  '/sw.js',
+])
+
+function isStaticAssetRequest(pathname: string) {
+  if (STATIC_ASSET_PATHS.has(pathname)) return true
+  if (STATIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return true
+  return /\/[^/]+\.[^/]+$/.test(pathname)
+}
+
+function isHtmlResponse(response: Response) {
+  return response.headers.get('content-type')?.toLowerCase().includes('text/html') ?? false
+}
+
+function staticAssetNotFound(pathname: string) {
+  return new Response(`Static asset not found: ${pathname}`, {
+    status: 404,
+    headers: {
+      'content-type': 'text/plain; charset=UTF-8',
+      'cache-control': 'no-store',
+    },
+  })
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
@@ -82,7 +110,13 @@ export default {
         })
       }
 
-      return await env.ASSETS.fetch(request)
+      const assetsResponse = await env.ASSETS.fetch(request)
+
+      if (isStaticAssetRequest(url.pathname) && isHtmlResponse(assetsResponse)) {
+        return staticAssetNotFound(url.pathname)
+      }
+
+      return assetsResponse
     } catch (error) {
       if (error instanceof ApiError) {
         return jsonError(error)
