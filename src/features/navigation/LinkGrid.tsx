@@ -106,6 +106,7 @@ function LinkVisual({
         aria-hidden="true"
         loading="lazy"
         onError={() => setFaviconFailed(true)}
+        decoding="async"
         className={faviconClassName}
       />
     )

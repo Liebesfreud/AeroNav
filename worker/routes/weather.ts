@@ -1,81 +1,123 @@
 import { ApiError, jsonSuccess } from '../auth/access'
 
-const weatherCodes: Record<number, { condition: string; icon: string }> = {
-  0: { condition: '晴朗', icon: 'sunny' },
-  1: { condition: '基本晴朗', icon: 'partly_cloudy_day' },
-  2: { condition: '局部多云', icon: 'partly_cloudy_day' },
-  3: { condition: '阴天', icon: 'cloud' },
-  45: { condition: '有雾', icon: 'foggy' },
-  48: { condition: '浓雾', icon: 'foggy' },
-  51: { condition: '毛毛雨', icon: 'rainy' },
-  53: { condition: '小雨', icon: 'rainy' },
-  55: { condition: '中雨', icon: 'rainy_heavy' },
-  56: { condition: '冻毛毛雨', icon: 'weather_mix' },
-  57: { condition: '冻雨', icon: 'weather_mix' },
-  61: { condition: '小雨', icon: 'rainy' },
-  63: { condition: '中雨', icon: 'rainy_heavy' },
-  65: { condition: '大雨', icon: 'rainy_heavy' },
-  66: { condition: '冻雨', icon: 'weather_mix' },
-  67: { condition: '强冻雨', icon: 'weather_mix' },
-  71: { condition: '小雪', icon: 'weather_snowy' },
-  73: { condition: '中雪', icon: 'weather_snowy' },
-  75: { condition: '大雪', icon: 'snowing' },
-  77: { condition: '雪粒', icon: 'weather_snowy' },
-  80: { condition: '阵雨', icon: 'rainy' },
-  81: { condition: '强阵雨', icon: 'rainy_heavy' },
-  82: { condition: '暴雨', icon: 'rainy_heavy' },
-  85: { condition: '阵雪', icon: 'weather_snowy' },
-  86: { condition: '强阵雪', icon: 'snowing' },
-  95: { condition: '雷暴', icon: 'thunderstorm' },
-  96: { condition: '雷暴夹小冰雹', icon: 'thunderstorm' },
-  99: { condition: '雷暴夹大冰雹', icon: 'thunderstorm' },
+const WTTR_TIMEOUT_MS = 2500
+
+const wttrWeatherCodes: Record<string, string> = {
+  '113': 'sunny',
+  '116': 'partly_cloudy_day',
+  '119': 'cloud',
+  '122': 'cloud',
+  '143': 'foggy',
+  '176': 'rainy',
+  '179': 'weather_mix',
+  '182': 'weather_mix',
+  '185': 'weather_mix',
+  '200': 'thunderstorm',
+  '227': 'weather_snowy',
+  '230': 'snowing',
+  '248': 'foggy',
+  '260': 'foggy',
+  '263': 'rainy',
+  '266': 'rainy',
+  '281': 'weather_mix',
+  '284': 'weather_mix',
+  '293': 'rainy',
+  '296': 'rainy',
+  '299': 'rainy',
+  '302': 'rainy_heavy',
+  '305': 'rainy_heavy',
+  '308': 'rainy_heavy',
+  '311': 'weather_mix',
+  '314': 'weather_mix',
+  '317': 'weather_mix',
+  '320': 'weather_snowy',
+  '323': 'weather_snowy',
+  '326': 'weather_snowy',
+  '329': 'snowing',
+  '332': 'snowing',
+  '335': 'snowing',
+  '338': 'snowing',
+  '350': 'weather_mix',
+  '353': 'rainy',
+  '356': 'rainy_heavy',
+  '359': 'rainy_heavy',
+  '362': 'weather_mix',
+  '365': 'weather_mix',
+  '368': 'weather_snowy',
+  '371': 'snowing',
+  '374': 'weather_mix',
+  '377': 'weather_mix',
+  '386': 'thunderstorm',
+  '389': 'thunderstorm',
+  '392': 'thunderstorm',
+  '395': 'snowing',
 }
 
-const forecastSchema = {
-  isForecastResponse(value: unknown): value is {
-    current: {
-      temperature_2m: number
-      weather_code: number
-      time: string
-    }
-  } {
-    if (typeof value !== 'object' || value === null || !('current' in value)) return false
-    const current = (value as { current?: unknown }).current
-    return typeof current === 'object' && current !== null
-      && typeof (current as { temperature_2m?: unknown }).temperature_2m === 'number'
-      && typeof (current as { weather_code?: unknown }).weather_code === 'number'
-      && typeof (current as { time?: unknown }).time === 'string'
-  },
-}
-
-const reverseSchema = {
-  isReverseResponse(value: unknown): value is {
-    results?: Array<{
-      name?: string
-      admin1?: string
-      country?: string
+const wttrSchema = {
+  isWeatherResponse(value: unknown): value is {
+    current_condition: Array<{
+      temp_C: string
+      temp_F: string
+      weatherCode: string
+      weatherDesc: Array<{ value: string }>
+      localObsDateTime?: string
+      observation_time?: string
+    }>
+    nearest_area?: Array<{
+      areaName?: Array<{ value: string }>
+      region?: Array<{ value: string }>
+      country?: Array<{ value: string }>
     }>
   } {
-    return typeof value === 'object' && value !== null
+    if (typeof value !== 'object' || value === null) return false
+    const response = value as { current_condition?: unknown }
+    if (!Array.isArray(response.current_condition) || response.current_condition.length === 0) return false
+    const current = response.current_condition[0] as { temp_C?: unknown; temp_F?: unknown; weatherCode?: unknown; weatherDesc?: unknown }
+    return typeof current.temp_C === 'string'
+      && typeof current.temp_F === 'string'
+      && typeof current.weatherCode === 'string'
+      && Array.isArray(current.weatherDesc)
   },
-}
-
-function getCondition(weatherCode: number) {
-  return weatherCodes[weatherCode] ?? { condition: '天气未知', icon: 'cloud' }
-}
-
-function normalizeUnit(unit: string | null) {
-  return unit === 'f' ? 'fahrenheit' : 'celsius'
 }
 
 function outputUnit(unit: string | null) {
   return unit === 'f' ? 'F' : 'C'
 }
 
-function formatLocation(result: { name?: string; admin1?: string; country?: string } | undefined) {
-  if (!result?.name) return null
-  const parts = [result.name, result.admin1, result.country].filter(Boolean)
-  return parts.join(' / ')
+function getTemperature(current: { temp_C: string; temp_F: string }, unit: string | null) {
+  return Number(unit === 'f' ? current.temp_F : current.temp_C)
+}
+
+function getCondition(current: { weatherDesc: Array<{ value: string }> }) {
+  return current.weatherDesc[0]?.value || '天气未知'
+}
+
+function getLocationName(response: {
+  nearest_area?: Array<{
+    areaName?: Array<{ value: string }>
+    region?: Array<{ value: string }>
+    country?: Array<{ value: string }>
+  }>
+}) {
+  const area = response.nearest_area?.[0]
+  if (!area) return null
+  const parts = [area.areaName?.[0]?.value, area.region?.[0]?.value, area.country?.[0]?.value]
+    .filter((value): value is string => Boolean(value))
+  return parts.length > 0 ? parts.join(' / ') : null
+}
+
+function mapWttrIcon(code: string, text: string) {
+  const mapped = wttrWeatherCodes[code]
+  if (mapped) return mapped
+  if (text.includes('雷') || text.toLowerCase().includes('thunder')) return 'thunderstorm'
+  if (text.includes('雪') || text.toLowerCase().includes('snow')) return 'weather_snowy'
+  if (text.includes('雨') || text.toLowerCase().includes('rain') || text.toLowerCase().includes('drizzle')) {
+    return text.includes('大') || text.includes('暴') || text.toLowerCase().includes('heavy') ? 'rainy_heavy' : 'rainy'
+  }
+  if (text.includes('雾') || text.includes('霾') || text.toLowerCase().includes('fog') || text.toLowerCase().includes('mist')) return 'foggy'
+  if (text.includes('阴') || text.includes('云') || text.toLowerCase().includes('cloud') || text.toLowerCase().includes('overcast')) return 'cloud'
+  if (text.includes('晴') || text.toLowerCase().includes('sunny') || text.toLowerCase().includes('clear')) return 'sunny'
+  return 'cloud'
 }
 
 export async function getWeather(request: Request) {
@@ -92,49 +134,38 @@ export async function getWeather(request: Request) {
     throw new ApiError(400, 'INVALID_TEMPERATURE_UNIT', '无效的温度单位参数。')
   }
 
-  const temperatureUnit = outputUnit(unit)
-  const forecastUrl = new URL('https://api.open-meteo.com/v1/forecast')
-  forecastUrl.searchParams.set('latitude', lat.toString())
-  forecastUrl.searchParams.set('longitude', lon.toString())
-  forecastUrl.searchParams.set('current', 'temperature_2m,weather_code')
-  forecastUrl.searchParams.set('temperature_unit', normalizeUnit(unit))
+  const weatherUrl = new URL(`https://wttr.in/${lat.toFixed(2)},${lon.toFixed(2)}`)
+  weatherUrl.searchParams.set('format', 'j1')
+  weatherUrl.searchParams.set('lang', 'zh')
 
-  const reverseUrl = new URL('https://geocoding-api.open-meteo.com/v1/reverse')
-  reverseUrl.searchParams.set('latitude', lat.toString())
-  reverseUrl.searchParams.set('longitude', lon.toString())
-  reverseUrl.searchParams.set('language', 'zh')
-  reverseUrl.searchParams.set('count', '1')
+  const weatherResponse = await fetch(weatherUrl.toString(), {
+    signal: AbortSignal.timeout(WTTR_TIMEOUT_MS),
+    headers: { 'User-Agent': 'AeroNav weather proxy' },
+  })
 
-  const [forecastResponse, reverseResponse] = await Promise.all([
-    fetch(forecastUrl.toString()),
-    fetch(reverseUrl.toString()),
-  ])
-
-  if (!forecastResponse.ok) {
+  if (!weatherResponse.ok) {
     throw new ApiError(502, 'WEATHER_PROVIDER_ERROR', '天气服务暂时不可用。')
   }
 
-  const forecastJson: unknown = await forecastResponse.json()
-  if (!forecastSchema.isForecastResponse(forecastJson)) {
+  const weatherJson: unknown = await weatherResponse.json()
+  if (!wttrSchema.isWeatherResponse(weatherJson)) {
     throw new ApiError(502, 'WEATHER_PROVIDER_INVALID_RESPONSE', '天气服务返回了无法识别的数据。')
   }
 
-  let locationName: string | null = null
-  if (reverseResponse.ok) {
-    const reverseJson: unknown = await reverseResponse.json()
-    if (reverseSchema.isReverseResponse(reverseJson)) {
-      locationName = formatLocation(reverseJson.results?.[0])
-    }
+  const current = weatherJson.current_condition[0]
+  const temperature = getTemperature(current, unit)
+  if (!Number.isFinite(temperature)) {
+    throw new ApiError(502, 'WEATHER_PROVIDER_INVALID_RESPONSE', '天气服务返回了无法识别的数据。')
   }
 
-  const mapped = getCondition(forecastJson.current.weather_code)
+  const condition = getCondition(current)
 
   return jsonSuccess({
-    temperature: forecastJson.current.temperature_2m,
-    unit: temperatureUnit,
-    condition: mapped.condition,
-    icon: mapped.icon,
-    locationName,
-    fetchedAt: forecastJson.current.time,
+    temperature,
+    unit: outputUnit(unit),
+    condition,
+    icon: mapWttrIcon(current.weatherCode, condition),
+    locationName: getLocationName(weatherJson),
+    fetchedAt: current.localObsDateTime || current.observation_time || new Date().toISOString(),
   })
 }

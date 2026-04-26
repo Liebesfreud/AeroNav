@@ -2,6 +2,15 @@ import tablerNodes from '../../node_modules/@tabler/icons/tabler-nodes-outline.j
 import { ApiError } from '../auth/access'
 
 const CACHE_CONTROL = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400'
+const ICON_FETCH_TIMEOUT_MS = 2000
+const DEFAULT_FAVICON_SVG = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
+  '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" />',
+  '<path d="M12 8v8" />',
+  '<path d="M8 12h8" />',
+  '</svg>',
+].join('')
 
 type TablerNode = [string, Record<string, string>]
 const tablerNodeMap = tablerNodes as unknown as Record<string, TablerNode[]>
@@ -50,6 +59,15 @@ function renderSvg(name: string) {
   ].join('')
 }
 
+function defaultFaviconResponse() {
+  return new Response(DEFAULT_FAVICON_SVG, {
+    headers: {
+      'Content-Type': 'image/svg+xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600',
+    },
+  })
+}
+
 async function getFaviconResponse(requestUrl: URL, rawUrl: string) {
   let sourceUrl: URL
 
@@ -74,17 +92,22 @@ async function getFaviconResponse(requestUrl: URL, rawUrl: string) {
 
   try {
     upstream = await fetch(targetUrl.toString(), {
+      signal: AbortSignal.timeout(ICON_FETCH_TIMEOUT_MS),
       cf: {
         cacheEverything: true,
         cacheTtl: 60 * 60 * 24 * 7,
       },
     })
   } catch {
-    throw new ApiError(502, 'ICON_FETCH_FAILED', '图标拉取失败，请稍后重试。')
+    const response = defaultFaviconResponse()
+    await cache.put(cacheKey, response.clone())
+    return response
   }
 
   if (!upstream.ok) {
-    throw new ApiError(404, 'ICON_NOT_FOUND', '未找到可用图标。')
+    const response = defaultFaviconResponse()
+    await cache.put(cacheKey, response.clone())
+    return response
   }
 
   const headers = new Headers(upstream.headers)

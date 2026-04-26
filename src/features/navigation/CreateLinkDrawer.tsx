@@ -51,7 +51,8 @@ function LinkPreview({ draft }: { draft: LinkDraft }) {
       {fallbackText}
     </div>
   ) : faviconUrl ? (
-    <img src={faviconUrl} alt="" aria-hidden="true" className={faviconClassName} />
+    <img src={faviconUrl} alt="" aria-hidden="true" loading="lazy" decoding="async" className={faviconClassName} />
+
   ) : (
     <div className={framedTextClassName}>
       {fallbackText}
