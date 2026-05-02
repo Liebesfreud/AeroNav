@@ -221,7 +221,7 @@ export function LinkGrid({
                     </div>
                   ) : null}
                   <div className="min-w-0">
-                    <h2 className="text-lg font-semibold tracking-tight text-on-background dark:text-dark-on-background">{group.name}</h2>
+                    <h2 className="text-lg font-semibold tracking-tight text-primary dark:text-primary">{group.name}</h2>
                   </div>
                 </div>
                 {editMode ? (
