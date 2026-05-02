@@ -1,5 +1,9 @@
 import type { Env, User } from '../db/schema'
 
+const SESSION_COOKIE_NAME = 'aeronav_session'
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
+const textEncoder = new TextEncoder()
+
 export class ApiError extends Error {
   status: number
   code: string
@@ -32,61 +36,121 @@ export function jsonError(error: ApiError) {
   )
 }
 
-function decodeAccessJwt(token: string): Partial<User> | null {
-  try {
-    const [, payload] = token.split('.')
-    if (!payload) return null
-    const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')))
-    return {
-      email: typeof json.email === 'string' ? json.email : undefined,
-      subject: typeof json.sub === 'string' ? json.sub : undefined,
-      name: typeof json.name === 'string' ? json.name : null,
+type SessionPayload = {
+  username: string
+  exp: number
+}
+
+function toBase64Url(input: string | Uint8Array) {
+  const bytes = typeof input === 'string' ? textEncoder.encode(input) : input
+  let binary = ''
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte)
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+}
+
+function fromBase64Url(input: string) {
+  const normalized = input.replace(/-/g, '+').replace(/_/g, '/')
+  const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4)
+  return Uint8Array.from(atob(padded), (char) => char.charCodeAt(0))
+}
+
+async function importSessionKey(secret: string) {
+  return crypto.subtle.importKey('raw', textEncoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify'])
+}
+
+async function signSessionPayload(payloadBase64: string, secret: string) {
+  const key = await importSessionKey(secret)
+  const signature = await crypto.subtle.sign('HMAC', key, textEncoder.encode(payloadBase64))
+  return toBase64Url(new Uint8Array(signature))
+}
+
+function getRequiredEnv(env: Env, key: 'ADMIN_USERNAME' | 'ADMIN_PASSWORD' | 'SESSION_SECRET') {
+  const value = env[key]
+  if (!value) {
+    throw new ApiError(500, 'AUTH_CONFIG_MISSING', `Missing required auth config: ${key}`)
+  }
+  return value
+}
+
+function getCookieValue(request: Request, name: string) {
+  const cookieHeader = request.headers.get('cookie')
+  if (!cookieHeader) return null
+
+  for (const part of cookieHeader.split(';')) {
+    const [rawName, ...rawValue] = part.trim().split('=')
+    if (rawName === name) {
+      return rawValue.join('=')
     }
+  }
+
+  return null
+}
+
+function buildUser(username: string): User {
+  return {
+    email: username,
+    subject: `admin:${username}`,
+    name: username,
+    displayName: username,
+  }
+}
+
+function getSessionExpiresAt() {
+  return Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS
+}
+
+function isSecureRequest(request: Request) {
+  return new URL(request.url).protocol === 'https:'
+}
+
+export async function createSessionCookie(env: Env, username: string, request: Request) {
+  const payload = toBase64Url(JSON.stringify({ username, exp: getSessionExpiresAt() } satisfies SessionPayload))
+  const signature = await signSessionPayload(payload, getRequiredEnv(env, 'SESSION_SECRET'))
+  const secure = isSecureRequest(request) ? '; Secure' : ''
+  return `${SESSION_COOKIE_NAME}=${payload}.${signature}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_TTL_SECONDS}${secure}`
+}
+
+export function clearSessionCookie(request: Request) {
+  const secure = isSecureRequest(request) ? '; Secure' : ''
+  return `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
+}
+
+export async function verifyAdminCredentials(env: Env, username: string, password: string) {
+  const expectedUsername = getRequiredEnv(env, 'ADMIN_USERNAME')
+  const expectedPassword = getRequiredEnv(env, 'ADMIN_PASSWORD')
+  return username === expectedUsername && password === expectedPassword
+}
+
+export async function getSessionUser(request: Request, env: Env): Promise<User | null> {
+  const cookie = getCookieValue(request, SESSION_COOKIE_NAME)
+  if (!cookie) return null
+
+  const [payloadBase64, signature] = cookie.split('.')
+  if (!payloadBase64 || !signature) return null
+
+  const expectedSignature = await signSessionPayload(payloadBase64, getRequiredEnv(env, 'SESSION_SECRET'))
+  if (signature !== expectedSignature) return null
+
+  try {
+    const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(payloadBase64))) as Partial<SessionPayload>
+    if (typeof payload.username !== 'string' || typeof payload.exp !== 'number') {
+      return null
+    }
+    if (payload.exp <= Math.floor(Date.now() / 1000)) {
+      return null
+    }
+    return buildUser(payload.username)
   } catch {
     return null
   }
 }
 
-function isLocalDevRequest(request: Request) {
-  const { hostname } = new URL(request.url)
-  return hostname === '127.0.0.1' || hostname === 'localhost'
-}
-
-function getLocalDevUser(request: Request): User | null {
-  if (!isLocalDevRequest(request)) {
-    return null
-  }
-
-  return {
-    email: 'dev@local.aeronav',
-    subject: 'local-dev-user',
-    name: 'Local Dev',
-    displayName: 'Local Dev',
-  }
-}
-
-export function getAccessUser(request: Request): User | null {
-  const email = request.headers.get('Cf-Access-Authenticated-User-Email')
-  const jwt = request.headers.get('Cf-Access-Jwt-Assertion')
-  const preferred = jwt ? decodeAccessJwt(jwt) : null
-  const subject = preferred?.subject ?? request.headers.get('Cf-Access-Authenticated-User-Id') ?? email
-
-  if (!email || !subject) {
-    return getLocalDevUser(request)
-  }
-
-  return {
-    email,
-    subject,
-    name: preferred?.name ?? null,
-    displayName: preferred?.name ?? null,
-  }
-}
-
-export function requireUser(request: Request): User {
-  const user = getAccessUser(request)
+export async function requireUser(request: Request, env: Env): Promise<User> {
+  const user = await getSessionUser(request, env)
   if (!user) {
-    throw new ApiError(401, 'UNAUTHORIZED', 'Missing Cloudflare Access identity')
+    throw new ApiError(401, 'UNAUTHORIZED', 'Missing or invalid admin session')
   }
   return user
 }
@@ -104,13 +168,14 @@ export function unauthorizedHtml(appName = 'AeroNav') {
       .eyebrow { color:#94a3b8; font-size:12px; letter-spacing:.2em; text-transform:uppercase; }
       h1 { margin:10px 0 8px; font-size:28px; }
       p { margin:0; color:#cbd5e1; line-height:1.7; }
+      code { color:#f8fafc; }
     </style>
   </head>
   <body>
     <div class="card">
       <div class="eyebrow">Private navigation</div>
-      <h1>需要先通过 Access 认证</h1>
-      <p>当前请求没有携带有效的 Cloudflare Access 身份信息，因此不会返回任何业务页面内容。</p>
+      <h1>需要先登录管理员账户</h1>
+      <p>当前请求没有携带有效的后台会话。请先调用 <code>/api/login</code> 完成登录，再访问业务页面或 API。</p>
     </div>
   </body>
 </html>`

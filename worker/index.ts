@@ -1,5 +1,6 @@
 import type { Env } from './db/schema'
-import { ApiError, ensureSettings, jsonError, requireUser, unauthorizedHtml, getAccessUser } from './auth/access'
+import { ApiError, ensureSettings, getSessionUser, jsonError, requireUser, unauthorizedHtml } from './auth/access'
+import { login, logout } from './routes/auth'
 import { bootstrap } from './routes/bootstrap'
 import { createGroup, deleteGroup, updateGroup } from './routes/groups'
 import { createLink, deleteLink, updateLink } from './routes/links'
@@ -57,8 +58,16 @@ export default {
         return await health(env)
       }
 
+      if (url.pathname === '/api/login' && request.method === 'POST') {
+        return await login(request, env)
+      }
+
+      if (url.pathname === '/api/logout' && request.method === 'POST') {
+        return await logout(request)
+      }
+
       if (url.pathname.startsWith('/api/')) {
-        const user = requireUser(request)
+        const user = await requireUser(request, env)
 
         if (url.pathname === '/api/bootstrap' && request.method === 'GET') {
           return await bootstrap(env, user)
@@ -103,7 +112,7 @@ export default {
         notFound()
       }
 
-      if (!getAccessUser(request)) {
+      if (!(await getSessionUser(request, env))) {
         return new Response(unauthorizedHtml(env.APP_NAME), {
           status: 401,
           headers: { 'content-type': 'text/html; charset=UTF-8' },

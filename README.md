@@ -128,15 +128,32 @@ npm run db:migrate:remote
 npm run cf:deploy
 ```
 
-### Access 认证说明
+8. 配置管理员登录 secrets
 
-这个项目默认依赖 **Cloudflare Access** 保护页面访问。
+```bash
+npx wrangler secret put ADMIN_USERNAME
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler secret put SESSION_SECRET
+```
 
-如果没有在 Cloudflare 控制台为该站点配置 Access：
-- 页面请求会返回未授权提示页
-- API 也无法拿到正常身份信息
+`SESSION_SECRET` 请使用足够随机的长字符串。
 
-也就是说，**部署成功不等于可以直接访问页面**，还需要在 Cloudflare Zero Trust / Access 里为该应用配置访问策略。
+### 管理员登录说明
+
+项目现已改为使用 **Worker 内置管理员登录**，不再依赖 Cloudflare Access。
+
+后端需要以下运行时配置：
+
+- `ADMIN_USERNAME`：管理员用户名
+- `ADMIN_PASSWORD`：管理员明文密码
+- `SESSION_SECRET`：用于签名 session cookie 的密钥
+
+认证相关接口：
+
+- `POST /api/login`
+- `POST /api/logout`
+
+登录成功后，Worker 会返回 `HttpOnly` session cookie。后续访问其他业务 API 和页面时都需要携带该 cookie。
 
 ### 推荐上线顺序
 

@@ -1,5 +1,6 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AppIcon } from '../AppIcon'
+import { useAuth } from '../../lib/auth'
 import type { ThemeMode } from '../../lib/theme'
 import { navigationItems } from './navigationItems'
 
@@ -14,6 +15,8 @@ interface SideNavBarProps {
 
 export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onToggleEditMode, visible, onToggleVisible }: SideNavBarProps) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
 
   return (
     <aside
@@ -49,7 +52,18 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
         </div>
 
         <div className="mt-auto flex flex-col items-center gap-3">
-          <button
+        <button
+          type="button"
+          aria-label="退出登录"
+          onClick={async () => {
+            await logout()
+            navigate('/login', { replace: true })
+          }}
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/20 dark:text-dark-on-surface-variant dark:hover:bg-red-950/30 dark:hover:text-red-400"
+        >
+          <AppIcon name="logout" className="h-5 w-5" />
+        </button>
+        <button
             type="button"
             aria-label={themeMode === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
             onClick={onToggleTheme}

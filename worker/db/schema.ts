@@ -2,6 +2,9 @@ export type Env = {
   DB: D1Database
   ASSETS: Fetcher
   APP_NAME?: string
+  ADMIN_USERNAME?: string
+  ADMIN_PASSWORD?: string
+  SESSION_SECRET?: string
 }
 
 export type User = {

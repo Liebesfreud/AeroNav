@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const userSchema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1),
   subject: z.string().min(1),
   name: z.string().nullable(),
   displayName: z.string().nullable(),
@@ -237,6 +237,13 @@ async function request<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
       code: 'NETWORK_ERROR',
       details: error,
     })
+  }
+
+  // Auto-logout on 401 — session expired or invalid
+  if (response.status === 401) {
+    try { localStorage.removeItem('aeronav:auth') } catch {}
+    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+    throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
   }
 
   const json = await parseResponseBody<T>(response)
