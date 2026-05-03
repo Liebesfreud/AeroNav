@@ -1,71 +1,27 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useEffect, useState, type ReactNode } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { api, ApiError, exportPayloadSchema, type Settings } from '../../lib/api'
-import { useAuth } from '../../lib/auth'
+import { api, ApiError, exportPayloadSchema } from '../../lib/api'
 import { AppIcon } from '../../components/AppIcon'
-import { Button } from '../../components/Button'
-import { Input } from '../../components/Input'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { applyTheme } from '../../lib/theme'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import type { AppOutletContext } from '../../app/App'
+import { SettingsAdminTab } from './SettingsAdminTab'
+import { SettingsAppearanceTab } from './SettingsAppearanceTab'
+import { SettingsDataTab } from './SettingsDataTab'
+import { SettingsGeneralTab } from './SettingsGeneralTab'
 
-type SettingToggleCardProps = {
-  icon: string
-  title: string
-  checked: boolean
-  disabled?: boolean
-  onToggle: () => void
-}
-
-type SegmentedOption<T extends string> = {
-  value: T
-  label: string
-}
-
-type SegmentedControlProps<T extends string> = {
-  icon: string
-  title: string
-  value: T
-  options: SegmentedOption<T>[]
-  disabled?: boolean
-  onChange: (value: T) => void
-}
-
-type NumberControlProps = {
-  icon: string
-  title: string
-  value: number
-  min: number
-  max: number
-  suffix?: string
-  disabled?: boolean
-  onChange: (value: number) => void
-}
-
-type SettingsTab = 'user' | 'appearance' | 'navigation' | 'weather' | 'data'
+type SettingsTab = 'general' | 'appearance' | 'data' | 'admin'
 
 const settingTabs: Array<{ value: SettingsTab; label: string; icon: string }> = [
-  { value: 'user', label: '用户', icon: 'user-circle' },
+  { value: 'general', label: '常规', icon: 'sliders' },
   { value: 'appearance', label: '外观', icon: 'palette' },
-  { value: 'navigation', label: '导航', icon: 'compass' },
-  { value: 'weather', label: '天气', icon: 'cloud-up' },
   { value: 'data', label: '数据', icon: 'database' },
+  { value: 'admin', label: '管理', icon: 'user-circle' },
 ]
 
-const sectionItemClassName = 'rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface'
-const rowIconClassName = 'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant'
-
-function SettingSection({
-  icon,
-  title,
-  children,
-}: {
-  icon: string
-  title: string
-  children: ReactNode
-}) {
+function SettingSection({ icon, title, children }: { icon: string; title: string; children: ReactNode }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 border-b border-outline pb-2 dark:border-dark-outline">
@@ -77,129 +33,6 @@ function SettingSection({
       <div className="space-y-3">{children}</div>
     </section>
   )
-}
-
-function SettingToggleCard({ icon, title, checked, disabled = false, onToggle }: SettingToggleCardProps) {
-  return (
-    <div className={`${sectionItemClassName} flex items-center justify-between gap-3`}>
-      <div className="flex min-w-0 items-center gap-3">
-        <div className={rowIconClassName}>
-          <AppIcon name={icon} className="h-[18px] w-[18px]" />
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
-        </div>
-      </div>
-      <button
-        type="button"
-        aria-pressed={checked}
-        onClick={onToggle}
-        disabled={disabled}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${checked ? 'bg-primary dark:bg-accent' : 'bg-outline/80 dark:bg-dark-outline'}`}
-      >
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${checked ? 'right-0.5' : 'left-0.5'}`} />
-      </button>
-    </div>
-  )
-}
-
-function SegmentedControl<T extends string>({
-  icon,
-  title,
-  value,
-  options,
-  disabled = false,
-  onChange,
-}: SegmentedControlProps<T>) {
-  return (
-    <div className={sectionItemClassName}>
-      <div className="flex items-start gap-3">
-        <div className={rowIconClassName}>
-          <AppIcon name={icon} className="h-[18px] w-[18px]" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                disabled={disabled}
-                onClick={() => onChange(option.value)}
-                className={`rounded-xl border px-3 py-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-40 ${value === option.value ? 'bg-on-background text-white border-on-background dark:bg-dark-on-background dark:text-dark-background dark:border-dark-on-background' : 'bg-transparent border-outline text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant dark:border-dark-outline dark:text-dark-on-surface-variant dark:hover:text-dark-on-surface dark:hover:border-dark-on-surface-variant'}`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function NumberControl({
-  icon,
-  title,
-  value,
-  min,
-  max,
-  suffix = '',
-  disabled = false,
-  onChange,
-}: NumberControlProps) {
-  return (
-    <div className={sectionItemClassName}>
-      <div className="flex items-start gap-3">
-        <div className={rowIconClassName}>
-          <AppIcon name={icon} className="h-[18px] w-[18px]" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">{title}</p>
-            <span className="shrink-0 text-xs font-medium text-on-surface-variant dark:text-dark-on-surface-variant">
-              {min}-{max}{suffix}
-            </span>
-          </div>
-          <div className="mt-3 flex items-center gap-3">
-            <Input
-              type="number"
-              min={min}
-              max={max}
-              step={1}
-              value={value}
-              disabled={disabled}
-              onChange={(event) => onChange(Number(event.target.value))}
-              className="min-h-10"
-            />
-            {suffix ? <span className="shrink-0 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">{suffix}</span> : null}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function saveSetting<K extends keyof Omit<Settings, 'updatedAt'>>(
-  mutate: (payload: Partial<Omit<Settings, 'updatedAt'>>) => void,
-  key: K,
-  value: Settings[K],
-) {
-  mutate({ [key]: value })
-}
-
-function normalizeNumberSetting(value: string, min: number, max: number) {
-  if (!value.trim()) {
-    return min
-  }
-
-  const next = Number(value)
-
-  if (!Number.isFinite(next)) {
-    return min
-  }
-
-  return Math.max(min, Math.min(max, Math.round(next)))
 }
 
 function normalizeWallpaperUrl(value: string) {
@@ -226,27 +59,8 @@ function normalizeWallpaperUrl(value: string) {
   }
 }
 
-function LogoutButton() {
-  const { logout } = useAuth()
-  const navigate = useNavigate()
-  const [pending, setPending] = useState(false)
-
-  const handleLogout = async () => {
-    setPending(true)
-    await logout()
-    navigate('/login', { replace: true })
-  }
-
-  return (
-    <Button variant="danger" onClick={handleLogout} disabled={pending}>
-      {pending ? '退出中...' : '退出'}
-    </Button>
-  )
-}
-
 export function SettingsPage() {
-  const fileRef = useRef<HTMLInputElement>(null)
-  const [activeTab, setActiveTab] = useState<SettingsTab>('user')
+  const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [nameDraft, setNameDraft] = useState('')
   const [wallpaperDraft, setWallpaperDraft] = useState('')
   const [wallpaperError, setWallpaperError] = useState<string | null>(null)
@@ -360,6 +174,7 @@ export function SettingsPage() {
   const { settings, user } = data
   const displayName = user.displayName || user.name || user.subject || '当前用户'
   const canSaveName = nameDraft.trim() !== (user.displayName ?? '').trim()
+  const currentTab = settingTabs.find((tab) => tab.value === activeTab) ?? settingTabs[0]
 
   return (
     <PageContainer className="py-6 lg:py-8">
@@ -396,239 +211,39 @@ export function SettingsPage() {
         </section>
 
         <div className="space-y-5">
-          <SettingSection icon={settingTabs.find((tab) => tab.value === activeTab)?.icon ?? settingTabs[0].icon} title={settingTabs.find((tab) => tab.value === activeTab)?.label ?? settingTabs[0].label}>
-              {activeTab === 'user' ? (
-                <>
-                  <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
-                    <div className="flex items-center gap-3">
-                      <div className="flex shrink-0 items-center justify-center text-primary dark:text-primary">
-                        <AppIcon name="user-circle" className="h-10 w-10" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-on-surface dark:text-dark-on-surface">{displayName}</p>
-                        <p className="truncate text-sm text-on-surface-variant dark:text-dark-on-surface-variant">{user.subject.replace(/^admin:/, '')}</p>
-                      </div>
-                    </div>
-                  </div>
+          <SettingSection icon={currentTab.icon} title={currentTab.label}>
+            {activeTab === 'general' ? <SettingsGeneralTab settings={settings} onSaveSetting={updateSettings.mutate} /> : null}
+            {activeTab === 'appearance' ? (
+              <SettingsAppearanceTab
+                settings={settings}
+                pending={updateSettings.isPending}
+                wallpaperDraft={wallpaperDraft}
+                wallpaperError={wallpaperError}
+                onWallpaperChange={handleWallpaperChange}
+                onSaveWallpaper={handleSaveWallpaper}
+                onClearWallpaper={handleClearWallpaper}
+                onSaveSetting={updateSettings.mutate}
+              />
+            ) : null}
+            {activeTab === 'data' ? (
+              <SettingsDataTab importPending={importMutation.isPending} importError={importError} onExport={handleExport} onImportFile={handleImportFile} />
+            ) : null}
+            {activeTab === 'admin' ? (
+              <SettingsAdminTab
+                user={user}
+                displayName={displayName}
+                nameDraft={nameDraft}
+                canSaveName={canSaveName}
+                updatePending={updateUser.isPending}
+                updateError={updateUserError}
+                onNameDraftChange={setNameDraft}
+                onSaveName={handleSaveName}
+              />
+            ) : null}
+          </SettingSection>
 
-                  <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                        <AppIcon name="badge" className="h-[18px] w-[18px]" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">显示名称</p>
-                        <p className="mt-1 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">仅在 AeroNav 内显示，不会修改登录系统中的姓名。</p>
-                        <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-                          <Input value={nameDraft} onChange={(event) => setNameDraft(event.target.value)} placeholder="请输入显示名称" className="min-h-11 flex-1" />
-                          <Button onClick={handleSaveName} disabled={updateUser.isPending || !canSaveName} className="sm:self-start">
-                            {updateUser.isPending ? '保存中' : '保存'}
-                          </Button>
-                        </div>
-                        {updateUserError ? <p className="mt-3 text-sm text-red-500">{updateUserError}</p> : null}
-                      </div>
-                    </div>
-                  </div>
-
-  <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
-  <div className="flex items-center justify-between gap-3">
-  <div className="flex items-center gap-3">
-  <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-  <AppIcon name="password" className="h-[18px] w-[18px]" />
-  </div>
-  <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">密码</p>
-  </div>
-  <span className="text-xs text-on-surface-variant dark:text-dark-on-surface-variant">由登录系统管理</span>
-  </div>
-  </div>
-
-  <div className="rounded-xl border border-red-200/60 bg-red-50/40 px-4 py-4 dark:border-red-900/30 dark:bg-red-950/20">
-  <div className="flex items-center justify-between gap-3">
-  <div className="flex items-center gap-3">
-  <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-  <AppIcon name="logout" className="h-[18px] w-[18px]" />
-  </div>
-  <div>
-  <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">退出登录</p>
-  <p className="mt-0.5 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">清除本地会话并返回登录页面。</p>
-  </div>
-  </div>
-  <LogoutButton />
-  </div>
-  </div>
-  </>
-              ) : null}
-
-              {activeTab === 'appearance' ? (
-                <>
-                  <SegmentedControl
-                    icon="contrast-2"
-                    title="主题模式"
-                    value={settings.themeMode}
-                    options={[
-                      { value: 'light', label: '浅色' },
-                      { value: 'dark', label: '深色' },
-                      { value: 'system', label: '跟随系统' },
-                    ]}
-                    onChange={(value) => saveSetting(updateSettings.mutate, 'themeMode', value)}
-                  />
-                  <SegmentedControl
-                    icon="layout-dashboard"
-                    title="卡片密度"
-                    value={settings.cardDensity}
-                    options={[
-                      { value: 'comfortable', label: '舒适' },
-                      { value: 'compact', label: '紧凑' },
-                    ]}
-                    onChange={(value) => saveSetting(updateSettings.mutate, 'cardDensity', value)}
-                  />
-                  <SettingToggleCard
-                    icon="grid-dots"
-                    title="显示分组图标"
-                    checked={settings.showGroupIcons}
-                    onToggle={() => saveSetting(updateSettings.mutate, 'showGroupIcons', !settings.showGroupIcons)}
-                  />
-                  <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                        <AppIcon name="wallpaper" className="h-[18px] w-[18px]" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">全局壁纸</p>
-                        <div className="mt-3 space-y-3">
-                          <Input
-                            type="url"
-                            inputMode="url"
-                            value={wallpaperDraft}
-                            onChange={(event) => handleWallpaperChange(event.target.value)}
-                            placeholder="https://example.com/wallpaper.jpg"
-                            className="min-h-11"
-                          />
-                          <div className="flex flex-wrap gap-2">
-                            <Button onClick={handleSaveWallpaper} disabled={updateSettings.isPending}>
-                              {updateSettings.isPending ? '应用中' : '应用壁纸'}
-                            </Button>
-                            <Button variant="secondary" onClick={handleClearWallpaper} disabled={updateSettings.isPending && !settings.wallpaperUrl}>
-                              清空壁纸
-                            </Button>
-                          </div>
-                          {wallpaperError ? <p className="text-sm text-red-500">{wallpaperError}</p> : null}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <NumberControl
-                    icon="droplet"
-                    title="背景遮罩强度"
-                    value={settings.wallpaperOverlayOpacity}
-                    min={0}
-                    max={100}
-                    suffix="%"
-                    disabled={!settings.wallpaperUrl}
-                    onChange={(value) => saveSetting(updateSettings.mutate, 'wallpaperOverlayOpacity', normalizeNumberSetting(String(value), 0, 100))}
-                  />
-                  <NumberControl
-                    icon="aperture"
-                    title="背景模糊"
-                    value={settings.wallpaperBlur}
-                    min={0}
-                    max={100}
-                    disabled={!settings.wallpaperUrl}
-                    onChange={(value) => saveSetting(updateSettings.mutate, 'wallpaperBlur', normalizeNumberSetting(String(value), 0, 100))}
-                  />
-                </>
-              ) : null}
-
-              {activeTab === 'navigation' ? (
-                <>
-                  <SettingToggleCard
-                    icon="external-link"
-                    title="默认在新标签页打开"
-                    checked={settings.openInNewTab}
-                    onToggle={() => saveSetting(updateSettings.mutate, 'openInNewTab', !settings.openInNewTab)}
-                  />
-                  <SegmentedControl
-                    icon="search"
-                    title="默认搜索引擎"
-                    value={settings.searchEngine}
-                    options={[
-                      { value: 'bing', label: '必应' },
-                      { value: 'google', label: '谷歌' },
-                    ]}
-                    onChange={(value) => saveSetting(updateSettings.mutate, 'searchEngine', value)}
-                  />
-                </>
-              ) : null}
-
-              {activeTab === 'weather' ? (
-                <>
-                  <SettingToggleCard
-                    icon="cloud"
-                    title="显示天气组件"
-                    checked={settings.weatherEnabled}
-                    onToggle={() => saveSetting(updateSettings.mutate, 'weatherEnabled', !settings.weatherEnabled)}
-                  />
-                  <SettingToggleCard
-                    icon="location"
-                    title="自动定位天气位置"
-                    checked={settings.weatherAutoLocate}
-                    disabled={!settings.weatherEnabled}
-                    onToggle={() => saveSetting(updateSettings.mutate, 'weatherAutoLocate', !settings.weatherAutoLocate)}
-                  />
-                  <SegmentedControl
-                    icon="temperature"
-                    title="温度单位"
-                    value={settings.temperatureUnit}
-                    disabled={!settings.weatherEnabled}
-                    options={[
-                      { value: 'system', label: '自动' },
-                      { value: 'c', label: '°C' },
-                      { value: 'f', label: '°F' },
-                    ]}
-                    onChange={(value) => saveSetting(updateSettings.mutate, 'temperatureUnit', value)}
-                  />
-                </>
-              ) : null}
-
-              {activeTab === 'data' ? (
-                <>
-                  <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                          <AppIcon name="download" className="h-[18px] w-[18px]" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">导出配置</p>
-                        </div>
-                      </div>
-                      <Button onClick={handleExport}>导出</Button>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
-                          <AppIcon name="upload" className="h-[18px] w-[18px]" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">恢复备份</p>
-                        </div>
-                      </div>
-                      <Button variant="secondary" onClick={() => fileRef.current?.click()} disabled={importMutation.isPending}>
-                        {importMutation.isPending ? '导入中' : '导入'}
-                      </Button>
-                    </div>
-                    <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(event) => handleImportFile(event.target.files?.[0] ?? null)} />
-                    {importError ? <p className="mt-3 text-sm text-red-500">{importError}</p> : null}
-                  </div>
-                </>
-              ) : null}
-            </SettingSection>
-
-            {settingsMutationError ? <p className="text-sm text-red-500">{settingsMutationError}</p> : null}
-          </div>
+          {settingsMutationError ? <p className="text-sm text-red-500">{settingsMutationError}</p> : null}
+        </div>
       </div>
     </PageContainer>
   )
