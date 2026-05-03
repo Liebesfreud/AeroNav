@@ -71,6 +71,7 @@ function LinkVisual({
   const faviconUrl = getFaviconUrl(link.url)
   const fallbackText = link.iconText || link.title.slice(0, 2) || '?'
   const iconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-container-low dark:bg-dark-surface-container/70`
+  const fallbackIconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-outline/60 bg-surface-container shadow-sm dark:border-dark-outline/80 dark:bg-dark-surface-elevated`
   const faviconClassName = `${iconClassName} shrink-0 object-contain ${imagePaddingClassName}`
 
   if (link.iconMode === 'image' && link.iconImageUrl && !imageFailed) {
@@ -89,7 +90,7 @@ function LinkVisual({
   if (link.iconMode === 'material' && link.icon) {
     return (
       <div className={iconFrameClassName}>
-        <AppIcon name={link.icon} className={`${glyphClassName} text-primary dark:text-primary`} />
+        <AppIcon name={link.icon} className={`${glyphClassName} text-primary dark:text-dark-on-surface`} />
       </div>
     )
   }
@@ -112,7 +113,15 @@ function LinkVisual({
     )
   }
 
-  if (link.iconMode === 'favicon' || link.iconMode === 'image') {
+  if (link.iconMode === 'favicon') {
+    return (
+      <div className={fallbackIconFrameClassName}>
+        <AppIcon name="box" className={`${glyphClassName} text-primary dark:text-dark-on-surface`} />
+      </div>
+    )
+  }
+
+  if (link.iconMode === 'image') {
     return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
   }
 
@@ -255,7 +264,7 @@ export function LinkGrid({
                   {links.map((link) => {
                     const iconOnly = link.tileSize === '1x1'
                     const iconClassName = cardDensity === 'compact' ? 'h-12 w-12' : 'h-14 w-14'
-                    const glyphClassName = cardDensity === 'compact' ? 'text-[2.15rem]' : 'text-[2.4rem]'
+                    const glyphClassName = cardDensity === 'compact' ? 'h-9 w-9' : 'h-10 w-10'
                     const imagePaddingClassName = 'p-0.5'
                     const fallbackTextClassName = cardDensity === 'compact' ? 'text-xl' : 'text-2xl'
                     const target = getLinkTarget(link.openMode, openInNewTab)
@@ -276,7 +285,7 @@ export function LinkGrid({
                         <LinkVisual
                           link={link}
                           iconClassName={cardDensity === 'compact' ? 'h-10 w-10' : 'h-11 w-11'}
-                          glyphClassName={cardDensity === 'compact' ? 'text-[1.8rem]' : 'text-[2rem]'}
+                          glyphClassName={cardDensity === 'compact' ? 'h-7 w-7' : 'h-8 w-8'}
                           imagePaddingClassName={imagePaddingClassName}
                           fallbackTextClassName={cardDensity === 'compact' ? 'text-lg' : 'text-xl'}
                         />

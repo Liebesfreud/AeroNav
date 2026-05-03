@@ -1,4 +1,4 @@
-import { useState, type SVGProps } from 'react'
+import { type SVGProps } from 'react'
 import type { Icon, IconProps } from '@tabler/icons-react'
 import { getNamedIconUrl } from '../lib/favicon'
 import {
@@ -6,6 +6,7 @@ import {
   IconArrowRight,
   IconArrowUpRight,
   IconBadge,
+  IconBox,
   IconChecks,
   IconChevronDown,
   IconCloud,
@@ -57,6 +58,7 @@ const iconMap: Record<string, Icon> = {
   arrow_forward: IconArrowRight,
   badge: IconBadge,
   blur_on: IconAperture,
+  box: IconBox,
   calendar_today: IconSquareRoundedLetterC,
   check: IconChecks,
   checks: IconChecks,
@@ -147,22 +149,21 @@ export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconPr
   const trimmedName = name?.trim()
   const resolvedIcon = trimmedName ? resolveIcon(trimmedName, fallback) : fallback
   const hasLocalIcon = !trimmedName || resolvedIcon !== fallback
-  const [namedIconFailed, setNamedIconFailed] = useState(false)
-
-  if (trimmedName && !hasLocalIcon && !namedIconFailed) {
+  if (trimmedName && !hasLocalIcon) {
     const namedIconUrl = getNamedIconUrl(trimmedName)
 
     if (namedIconUrl) {
-    return (
-        <img
-          src={namedIconUrl}
-          alt=""
+      return (
+        <span
+          role="img"
           aria-hidden="true"
-          loading="lazy"
-          onError={() => setNamedIconFailed(true)}
-          className={[className, 'object-contain'].filter(Boolean).join(' ')}
+          className={["inline-block bg-current text-primary dark:text-dark-on-surface", className].filter(Boolean).join(' ')}
+          style={{
+            mask: `url(${namedIconUrl}) center / contain no-repeat`,
+            WebkitMask: `url(${namedIconUrl}) center / contain no-repeat`,
+          }}
         />
-    )
+      )
     }
   }
 
@@ -172,7 +173,7 @@ export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconPr
     <IconComponent
       aria-hidden="true"
       stroke={1.8}
-      className={["text-primary dark:text-primary", className].filter(Boolean).join(' ')}
+      className={["text-primary dark:text-dark-on-surface", className].filter(Boolean).join(' ')}
       {...restProps}
     />
   )

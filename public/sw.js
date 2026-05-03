@@ -1,4 +1,4 @@
-const VERSION = 'aeronav-static-v2'
+const VERSION = 'aeronav-static-v4'
 const RUNTIME_CACHE = `runtime-${VERSION}`
 const ICON_CACHE = `icons-${VERSION}`
 const FONT_CACHE = `fonts-${VERSION}`
