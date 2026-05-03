@@ -235,8 +235,25 @@ export async function ensureSettings(env: Env) {
     )`,
   ).run()
 
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS web_panels (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      url TEXT NOT NULL,
+      icon TEXT,
+      description TEXT,
+      open_mode TEXT NOT NULL DEFAULT 'iframe',
+      enabled INTEGER NOT NULL DEFAULT 1,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`,
+  ).run()
+
   await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_groups_sort_order ON groups(sort_order)').run()
   await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_links_group_sort ON links(group_id, sort_order)').run()
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_web_panels_enabled ON web_panels(enabled)').run()
+  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_web_panels_sort_order ON web_panels(sort_order)').run()
 
   try {
     await env.DB.prepare(

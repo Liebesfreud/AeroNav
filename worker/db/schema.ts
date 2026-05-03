@@ -48,6 +48,19 @@ export type LinkRow = {
   updated_at: string
 }
 
+export type WebPanelRow = {
+  id: string
+  title: string
+  url: string
+  icon: string | null
+  description: string | null
+  open_mode: 'iframe' | 'external'
+  enabled: number
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
 export type SettingsRow = {
   id: number
   theme_mode: 'light' | 'dark' | 'system'

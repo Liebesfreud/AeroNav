@@ -13,6 +13,11 @@ const SettingsPage = lazy(async () => {
   return { default: module.SettingsPage }
 })
 
+const PanelPage = lazy(async () => {
+  const module = await import('../features/panels/PanelPage')
+  return { default: module.PanelPage }
+})
+
 const LoginPage = lazy(async () => {
   const module = await import('../features/auth/LoginPage')
   return { default: module.LoginPage }
@@ -56,6 +61,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<RouteFallback />}>
             <SettingsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'panels/:panelId',
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <PanelPage />
           </Suspense>
         ),
       },

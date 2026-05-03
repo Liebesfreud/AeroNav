@@ -5,6 +5,8 @@ import { SideNavBar } from './SideNavBar'
 
 interface LayoutProps {
   children: ReactNode;
+  activeOverlay?: ReactNode;
+  activeOverlayVisible?: boolean;
   themeMode?: ThemeMode;
   wallpaperUrl?: string | null;
   wallpaperOverlayOpacity?: number;
@@ -19,7 +21,7 @@ interface LayoutProps {
   bootstrapError?: boolean;
 }
 
-export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpacity = 78, wallpaperBlur = 0, onToggleTheme, editMode, onToggleEditMode, sidebarVisible, onToggleSidebar, bootstrapLoading = false, bootstrapRefreshing = false, bootstrapError = false }: LayoutProps) {
+export function Layout({ children, activeOverlay, activeOverlayVisible = false, themeMode, wallpaperUrl, wallpaperOverlayOpacity = 78, wallpaperBlur = 0, onToggleTheme, editMode, onToggleEditMode, sidebarVisible, onToggleSidebar, bootstrapLoading = false, bootstrapRefreshing = false, bootstrapError = false }: LayoutProps) {
   const wallpaperStyle = wallpaperUrl
     ? ({
         backgroundImage: `url("${encodeURI(wallpaperUrl)}")`,
@@ -69,7 +71,10 @@ export function Layout({ children, themeMode, wallpaperUrl, wallpaperOverlayOpac
               </div>
             </div>
           ) : (
-            <div className="min-h-screen">{children}</div>
+            <>
+              <div className={activeOverlayVisible ? 'hidden' : 'min-h-screen'}>{children}</div>
+              {activeOverlay}
+            </>
           )}
         </main>
       </div>

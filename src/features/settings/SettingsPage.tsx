@@ -11,12 +11,14 @@ import { SettingsAdminTab } from './SettingsAdminTab'
 import { SettingsAppearanceTab } from './SettingsAppearanceTab'
 import { SettingsDataTab } from './SettingsDataTab'
 import { SettingsGeneralTab } from './SettingsGeneralTab'
+import { SettingsPanelsTab } from './SettingsPanelsTab'
 
-type SettingsTab = 'general' | 'appearance' | 'data' | 'admin'
+type SettingsTab = 'general' | 'appearance' | 'data' | 'panels' | 'admin'
 
 const settingTabs: Array<{ value: SettingsTab; label: string; icon: string }> = [
   { value: 'general', label: '常规', icon: 'sliders' },
   { value: 'appearance', label: '外观', icon: 'palette' },
+  { value: 'panels', label: '面板', icon: 'layout-dashboard' },
   { value: 'data', label: '数据', icon: 'database' },
   { value: 'admin', label: '管理', icon: 'user-circle' },
 ]
@@ -224,6 +226,9 @@ export function SettingsPage() {
                 onClearWallpaper={handleClearWallpaper}
                 onSaveSetting={updateSettings.mutate}
               />
+            ) : null}
+            {activeTab === 'panels' ? (
+              <SettingsPanelsTab panels={data.panels} />
             ) : null}
             {activeTab === 'data' ? (
               <SettingsDataTab importPending={importMutation.isPending} importError={importError} onExport={handleExport} onImportFile={handleImportFile} />

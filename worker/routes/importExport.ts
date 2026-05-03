@@ -34,10 +34,20 @@ const settingsOnlySchema = z.object({
   }),
 })
 
+const panelUrlSchema = z
+  .string()
+  .trim()
+  .url()
+  .refine((value) => {
+    const protocol = new URL(value).protocol
+    return protocol === 'http:' || protocol === 'https:'
+  })
+
 const importSchema = z.object({
   version: z.string().optional(),
   groups: z.array(z.object({ id: z.string(), name: z.string().min(1), icon: z.string().nullable().optional(), sortOrder: z.number().int().nonnegative() })),
   links: z.array(z.object({ id: z.string(), groupId: z.string(), title: z.string().min(1), url: z.string().url(), icon: z.string().nullable().optional(), iconMode: z.enum(['favicon', 'material', 'image', 'text']).default('favicon'), iconImageUrl: z.string().url().nullable().optional(), iconText: z.string().nullable().optional(), description: z.string().nullable().optional(), tileSize: z.enum(['1x1', '1x3']).default('1x3'), openMode: z.enum(['global', 'same-tab', 'new-tab']).default('global'), backgroundColor: z.string().nullable().optional(), sortOrder: z.number().int().nonnegative() })),
+  panels: z.array(z.object({ id: z.string(), title: z.string().trim().min(1).max(80), url: panelUrlSchema, icon: z.string().trim().max(80).nullable().optional(), description: z.string().trim().max(200).nullable().optional(), openMode: z.enum(['iframe', 'external']).default('iframe'), enabled: z.boolean().default(true), sortOrder: z.number().int().nonnegative() })).default([]),
   settings: z.object({
     themeMode: z.enum(['light', 'dark', 'system']),
     cardDensity: z.enum(['compact', 'comfortable']),
@@ -55,7 +65,7 @@ const importSchema = z.object({
 
 export async function exportData(env: Env, user: User) {
   const data = await getBootstrap(env, user)
-  return jsonSuccess({ version: '1', exportedAt: nowIso(), groups: data.groups, links: data.links, settings: data.settings })
+  return jsonSuccess({ version: '1', exportedAt: nowIso(), groups: data.groups, links: data.links, panels: data.panels, settings: data.settings })
 }
 
 export async function importData(request: Request, env: Env, user: User) {
@@ -97,6 +107,7 @@ export async function importData(request: Request, env: Env, user: User) {
   const statements: D1PreparedStatement[] = [
     env.DB.prepare('DELETE FROM links'),
     env.DB.prepare('DELETE FROM groups'),
+    env.DB.prepare('DELETE FROM web_panels'),
   ]
 
   for (const group of parsed.data.groups) {
@@ -110,6 +121,13 @@ export async function importData(request: Request, env: Env, user: User) {
     statements.push(
       env.DB.prepare('INSERT INTO links (id, group_id, title, url, icon, icon_mode, icon_image_url, icon_text, description, tile_size, open_mode, background_color, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
         .bind(link.id, link.groupId, link.title, link.url, link.icon ?? null, link.iconMode, link.iconImageUrl ?? null, link.iconText ?? null, link.description ?? null, link.tileSize, link.openMode, link.backgroundColor ?? null, link.sortOrder, nowIso(), nowIso()),
+    )
+  }
+
+  for (const panel of parsed.data.panels) {
+    statements.push(
+      env.DB.prepare('INSERT INTO web_panels (id, title, url, icon, description, open_mode, enabled, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(panel.id, panel.title, panel.url, panel.icon ?? null, panel.description ?? null, panel.openMode, panel.enabled ? 1 : 0, panel.sortOrder, nowIso(), nowIso()),
     )
   }
 

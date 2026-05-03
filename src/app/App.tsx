@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useMatch } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { Layout } from '../components/layout/Layout'
+import { PanelKeepAliveHost } from '../features/panels/PanelKeepAliveHost'
 import { useBootstrapCache, useBootstrapQuery } from '../hooks/useBootstrap'
 import { api, type BootstrapData } from '../lib/api'
 import { applyTheme, resolveTheme } from '../lib/theme'
@@ -16,6 +17,8 @@ export type AppOutletContext = {
 
 export function App() {
   const { data, isLoading, isFetching, isError } = useBootstrapQuery()
+  const panelMatch = useMatch('/panels/:panelId')
+  const activePanelId = panelMatch?.params.panelId
   const { update } = useBootstrapCache()
   const [editMode, setEditMode] = useState(false)
   const [sidebarVisible, setSidebarVisible] = useState(false)
@@ -40,6 +43,8 @@ export function App() {
 
   return (
     <Layout
+      activeOverlay={<PanelKeepAliveHost bootstrapData={data} activePanelId={activePanelId} />}
+      activeOverlayVisible={!!activePanelId}
       themeMode={data?.settings.themeMode}
       wallpaperUrl={data?.settings.wallpaperUrl}
       wallpaperOverlayOpacity={data?.settings.wallpaperOverlayOpacity}

@@ -38,6 +38,19 @@ export const linkSchema = z.object({
   updatedAt: z.string(),
 })
 
+export const webPanelSchema = z.object({
+  id: z.string(),
+  title: z.string().min(1),
+  url: z.string().url(),
+  icon: z.string().nullable(),
+  description: z.string().nullable(),
+  openMode: z.enum(['iframe', 'external']),
+  enabled: z.boolean(),
+  sortOrder: z.number().int(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+
 const wallpaperUrlSchema = z
   .string()
   .trim()
@@ -72,6 +85,7 @@ export const bootstrapSchema = z.object({
   groups: z.array(groupSchema),
   links: z.array(linkSchema),
   settings: settingsSchema,
+  panels: z.array(webPanelSchema),
 })
 
 export const exportPayloadSchema = z.object({
@@ -80,6 +94,7 @@ export const exportPayloadSchema = z.object({
   groups: z.array(groupSchema),
   links: z.array(linkSchema),
   settings: settingsSchema,
+  panels: z.array(webPanelSchema).default([]),
 })
 
 const weatherResponseSchema = z.object({
@@ -94,6 +109,8 @@ const weatherResponseSchema = z.object({
 export type User = z.infer<typeof userSchema>
 export type Group = z.infer<typeof groupSchema>
 export type LinkItem = z.infer<typeof linkSchema>
+export type WebPanel = z.infer<typeof webPanelSchema>
+export type WebPanelOpenMode = WebPanel['openMode']
 export type Settings = z.infer<typeof settingsSchema>
 export type BootstrapData = z.infer<typeof bootstrapSchema>
 export type ExportPayload = z.infer<typeof exportPayloadSchema>
@@ -147,6 +164,22 @@ export type ReorderPayload = {
 
 export type SettingsUpdatePayload = Partial<Omit<Settings, 'updatedAt'>>
 export type UserUpdatePayload = z.infer<typeof updateUserSchema>
+
+export type WebPanelCreatePayload = {
+  title: string
+  url: string
+  icon?: string | null
+  description?: string | null
+  openMode?: WebPanelOpenMode
+  enabled?: boolean
+  sortOrder?: number
+}
+
+export type WebPanelUpdatePayload = Partial<WebPanelCreatePayload>
+
+export type WebPanelReorderPayload = {
+  panels: Array<{ id: string; sortOrder: number }>
+}
 
 export class ApiError extends Error {
   code: string
@@ -317,6 +350,24 @@ export const api = {
   updateUser: (payload: UserUpdatePayload) =>
     request<{ user: User }>('/api/user', {
       method: 'PATCH',
+      body: JSON.stringify(payload),
+    }),
+  listPanels: () => request<{ panels: WebPanel[] }>('/api/panels'),
+  createPanel: (payload: WebPanelCreatePayload) =>
+    request<{ panel: WebPanel; panels: WebPanel[] }>('/api/panels', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  updatePanel: (id: string, payload: WebPanelUpdatePayload) =>
+    request<{ panel: WebPanel; panels: WebPanel[] }>(`/api/panels/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    }),
+  deletePanel: (id: string) =>
+    request<{ panels: WebPanel[] }>(`/api/panels/${id}`, { method: 'DELETE' }),
+  reorderPanels: (payload: WebPanelReorderPayload) =>
+    request<{ panels: WebPanel[] }>('/api/panels/reorder', {
+      method: 'POST',
       body: JSON.stringify(payload),
     }),
   exportAll: () => request<ExportPayload>('/api/export'),

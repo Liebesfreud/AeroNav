@@ -10,6 +10,7 @@ import { reorderEntities } from './routes/reorder'
 import { updateUser } from './routes/user'
 import { getWeather } from './routes/weather'
 import { getIcon } from './routes/icon'
+import { listPanels, createPanel, patchPanel, removePanel, reorderPanels } from './routes/panels'
 
 function notFound() {
   throw new ApiError(404, 'NOT_FOUND', 'Route not found')
@@ -107,6 +108,21 @@ export default {
         }
         if (url.pathname === '/api/icon' && request.method === 'GET') {
           return await getIcon(request)
+        }
+        if (url.pathname === '/api/panels' && request.method === 'GET') {
+          return await listPanels(env)
+        }
+        if (url.pathname === '/api/panels' && request.method === 'POST') {
+          return await createPanel(request, env)
+        }
+        if (url.pathname === '/api/panels/reorder' && request.method === 'POST') {
+          return await reorderPanels(request, env)
+        }
+        if (url.pathname.startsWith('/api/panels/') && request.method === 'PATCH') {
+          return await patchPanel(request, env, getIdFromPath(url.pathname))
+        }
+        if (url.pathname.startsWith('/api/panels/') && request.method === 'DELETE') {
+          return await removePanel(env, getIdFromPath(url.pathname))
         }
 
         notFound()

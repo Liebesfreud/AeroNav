@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AppIcon } from '../AppIcon'
 import { useAuth } from '../../lib/auth'
+import { useBootstrapQuery } from '../../hooks/useBootstrap'
 import type { ThemeMode } from '../../lib/theme'
 import { navigationItems } from './navigationItems'
 
@@ -17,6 +18,10 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
   const location = useLocation()
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { data } = useBootstrapQuery()
+  const panels = (data?.panels ?? []).filter((panel) => panel.enabled)
+  const itemClassName = (active: boolean) =>
+    `flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 [&_svg]:!text-current [&_span]:!text-current ${active ? 'bg-on-background text-white dark:bg-dark-on-background dark:text-dark-background' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`
 
   return (
     <aside
@@ -43,31 +48,56 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
                 key={item.icon}
                 to={item.path}
                 aria-label={item.name}
-                className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 ${isActive ? 'bg-on-background text-white dark:bg-dark-on-background dark:text-dark-background' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
+                title={item.name}
+                className={itemClassName(isActive)}
               >
                 <AppIcon name={item.icon} className="h-5 w-5" />
+              </Link>
+            )
+          })}
+          {panels.length ? <div className="my-1 h-px w-8 bg-outline/70 dark:bg-dark-outline/70" /> : null}
+          {panels.map((panel) => {
+            const path = `/panels/${panel.id}`
+            const isActive = location.pathname === path
+            return (
+              <Link
+                key={panel.id}
+                to={path}
+                aria-label={panel.title}
+                title={panel.title}
+                className={itemClassName(isActive)}
+              >
+                <AppIcon name={panel.icon || 'layout-dashboard'} className="h-5 w-5" />
               </Link>
             )
           })}
         </div>
 
         <div className="mt-auto flex flex-col items-center gap-3">
-        <button
-          type="button"
-          aria-label="退出登录"
-          onClick={async () => {
-            await logout()
-            navigate('/login', { replace: true })
-          }}
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/20 dark:text-dark-on-surface-variant dark:hover:bg-red-950/30 dark:hover:text-red-400"
-        >
-          <AppIcon name="logout" className="h-5 w-5" />
-        </button>
-        <button
+          <Link
+            to="/settings"
+            aria-label="设置"
+            title="设置"
+            className={itemClassName(location.pathname.startsWith('/settings'))}
+          >
+            <AppIcon name="settings" className="h-5 w-5" />
+          </Link>
+          <button
+            type="button"
+            aria-label="退出登录"
+            onClick={async () => {
+              await logout()
+              navigate('/login', { replace: true })
+            }}
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/20 dark:text-dark-on-surface-variant dark:hover:bg-red-950/30 dark:hover:text-red-400 [&_svg]:!text-current [&_span]:!text-current"
+          >
+            <AppIcon name="logout" className="h-5 w-5" />
+          </button>
+          <button
             type="button"
             aria-label={themeMode === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
             onClick={onToggleTheme}
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-surface-container-low hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-200 hover:bg-surface-container-low hover:text-on-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background [&_svg]:!text-current [&_span]:!text-current"
           >
             <AppIcon name={themeMode === 'dark' ? 'sun' : 'moon'} className="h-5 w-5" />
           </button>
@@ -76,7 +106,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
             aria-label="切换编辑模式"
             aria-pressed={editMode}
             onClick={onToggleEditMode}
-            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 ${editMode ? 'bg-surface-container-low text-primary dark:bg-dark-surface-container dark:text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 [&_svg]:!text-current [&_span]:!text-current ${editMode ? 'bg-surface-container-low text-primary dark:bg-dark-surface-container dark:text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-background dark:text-dark-on-surface-variant dark:hover:bg-dark-surface-container/75 dark:hover:text-dark-on-background'}`}
           >
             <AppIcon name="pencil-cog" className="h-5 w-5" />
           </button>
