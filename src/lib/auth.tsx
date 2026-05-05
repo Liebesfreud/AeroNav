@@ -11,14 +11,6 @@ const AuthContext = createContext<AuthState | null>(null)
 
 const AUTH_KEY = 'aeronav:auth'
 
-function readStoredAuth(): boolean {
-  try {
-    return localStorage.getItem(AUTH_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
-
 function storeAuth(value: boolean) {
   try {
     if (value) {
@@ -32,7 +24,7 @@ function storeAuth(value: boolean) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setAuthenticated] = useState(() => readStoredAuth())
+  const [isAuthenticated, setAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   // Sync across tabs

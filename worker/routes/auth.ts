@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import type { Env } from '../db/schema'
-import { ApiError, clearSessionCookie, createSessionCookie, jsonSuccess, verifyAdminCredentials } from '../auth/access'
+import { ApiError, assertLoginAllowed, clearSessionCookie, createSessionCookie, jsonSuccess, recordLoginResult, verifyAdminCredentials } from '../auth/access'
 
 const loginSchema = z.object({
   username: z.string().trim().min(1).max(120),
@@ -14,7 +14,9 @@ export async function login(request: Request, env: Env) {
   }
 
   const { username, password } = parsed.data
+  await assertLoginAllowed(request, env, username)
   const isValid = await verifyAdminCredentials(env, username, password)
+  await recordLoginResult(request, env, username, isValid)
 
   if (!isValid) {
     throw new ApiError(401, 'INVALID_CREDENTIALS', 'Invalid username or password')

@@ -1,5 +1,5 @@
 import type { Env } from './db/schema'
-import { ApiError, ensureSettings, getSessionUser, jsonError, requireUser, unauthorizedHtml } from './auth/access'
+import { ApiError, getSessionUser, jsonError, requireUser, unauthorizedHtml } from './auth/access'
 import { login, logout } from './routes/auth'
 import { bootstrap } from './routes/bootstrap'
 import { createGroup, deleteGroup, updateGroup } from './routes/groups'
@@ -52,7 +52,6 @@ function staticAssetNotFound(pathname: string) {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
-      await ensureSettings(env)
       const url = new URL(request.url)
 
       if (url.pathname === '/api/health' && request.method === 'GET') {

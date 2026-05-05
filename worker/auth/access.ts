@@ -1,7 +1,9 @@
 import type { Env, User } from '../db/schema'
 
 const SESSION_COOKIE_NAME = 'aeronav_session'
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7
+const LOGIN_WINDOW_SECONDS = 15 * 60
+const MAX_LOGIN_ATTEMPTS = 5
 const textEncoder = new TextEncoder()
 
 export class ApiError extends Error {
@@ -39,6 +41,14 @@ export function jsonError(error: ApiError) {
 type SessionPayload = {
   username: string
   exp: number
+  iat: number
+}
+
+type LoginAttemptRow = {
+  identifier: string
+  attempts: number
+  first_attempt_at: number
+  locked_until: number | null
 }
 
 function toBase64Url(input: string | Uint8Array) {
@@ -74,6 +84,88 @@ function getRequiredEnv(env: Env, key: 'ADMIN_USERNAME' | 'ADMIN_PASSWORD' | 'SE
   return value
 }
 
+
+function getClientIp(request: Request) {
+  return request.headers.get('cf-connecting-ip')
+    ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    ?? 'unknown'
+}
+
+function loginIdentifier(request: Request, username: string) {
+  return `${getClientIp(request)}:${username.toLowerCase()}`.slice(0, 256)
+}
+
+function nowSeconds() {
+  return Math.floor(Date.now() / 1000)
+}
+
+function constantTimeEqual(a: string, b: string) {
+  const left = textEncoder.encode(a)
+  const right = textEncoder.encode(b)
+  const length = Math.max(left.length, right.length)
+  let diff = left.length ^ right.length
+
+  for (let index = 0; index < length; index += 1) {
+    diff |= (left[index] ?? 0) ^ (right[index] ?? 0)
+  }
+
+  return diff === 0
+}
+
+function getSessionNotBefore(env: Env) {
+  const raw = env.SESSION_NOT_BEFORE
+  if (!raw) return 0
+  const parsed = Number(raw)
+  if (Number.isFinite(parsed) && parsed > 0) return Math.floor(parsed)
+  const date = Date.parse(raw)
+  return Number.isFinite(date) ? Math.floor(date / 1000) : 0
+}
+
+export async function assertLoginAllowed(request: Request, env: Env, username: string) {
+  const identifier = loginIdentifier(request, username)
+  const row = await env.DB.prepare('SELECT * FROM login_attempts WHERE identifier = ?')
+    .bind(identifier)
+    .first<LoginAttemptRow>()
+  const now = nowSeconds()
+
+  if (row?.locked_until && row.locked_until > now) {
+    throw new ApiError(429, 'LOGIN_RATE_LIMITED', 'Too many failed login attempts. Please try again later.', {
+      retryAfterSeconds: row.locked_until - now,
+    })
+  }
+}
+
+export async function recordLoginResult(request: Request, env: Env, username: string, success: boolean) {
+  const identifier = loginIdentifier(request, username)
+
+  if (success) {
+    await env.DB.prepare('DELETE FROM login_attempts WHERE identifier = ?').bind(identifier).run()
+    return
+  }
+
+  const now = nowSeconds()
+  const row = await env.DB.prepare('SELECT * FROM login_attempts WHERE identifier = ?')
+    .bind(identifier)
+    .first<LoginAttemptRow>()
+
+  const inWindow = row !== null && now - row.first_attempt_at <= LOGIN_WINDOW_SECONDS
+  const attempts = inWindow && row ? row.attempts + 1 : 1
+  const firstAttemptAt = inWindow && row ? row.first_attempt_at : now
+  const lockedUntil = attempts >= MAX_LOGIN_ATTEMPTS ? now + LOGIN_WINDOW_SECONDS : null
+
+  await env.DB.prepare(
+    `INSERT INTO login_attempts (identifier, attempts, first_attempt_at, locked_until, updated_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(identifier) DO UPDATE SET
+       attempts = excluded.attempts,
+       first_attempt_at = excluded.first_attempt_at,
+       locked_until = excluded.locked_until,
+       updated_at = excluded.updated_at`,
+  )
+    .bind(identifier, attempts, firstAttemptAt, lockedUntil, new Date().toISOString())
+    .run()
+}
+
 function getCookieValue(request: Request, name: string) {
   const cookieHeader = request.headers.get('cookie')
   if (!cookieHeader) return null
@@ -98,7 +190,7 @@ function buildUser(username: string): User {
 }
 
 function getSessionExpiresAt() {
-  return Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS
+  return nowSeconds() + SESSION_TTL_SECONDS
 }
 
 function isSecureRequest(request: Request) {
@@ -106,7 +198,7 @@ function isSecureRequest(request: Request) {
 }
 
 export async function createSessionCookie(env: Env, username: string, request: Request) {
-  const payload = toBase64Url(JSON.stringify({ username, exp: getSessionExpiresAt() } satisfies SessionPayload))
+  const payload = toBase64Url(JSON.stringify({ username, exp: getSessionExpiresAt(), iat: nowSeconds() } satisfies SessionPayload))
   const signature = await signSessionPayload(payload, getRequiredEnv(env, 'SESSION_SECRET'))
   const secure = isSecureRequest(request) ? '; Secure' : ''
   return `${SESSION_COOKIE_NAME}=${payload}.${signature}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_TTL_SECONDS}${secure}`
@@ -131,14 +223,14 @@ export async function getSessionUser(request: Request, env: Env): Promise<User |
   if (!payloadBase64 || !signature) return null
 
   const expectedSignature = await signSessionPayload(payloadBase64, getRequiredEnv(env, 'SESSION_SECRET'))
-  if (signature !== expectedSignature) return null
+  if (!constantTimeEqual(signature, expectedSignature)) return null
 
   try {
     const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(payloadBase64))) as Partial<SessionPayload>
-    if (typeof payload.username !== 'string' || typeof payload.exp !== 'number') {
+    if (typeof payload.username !== 'string' || typeof payload.exp !== 'number' || typeof payload.iat !== 'number') {
       return null
     }
-    if (payload.exp <= Math.floor(Date.now() / 1000)) {
+    if (payload.exp <= nowSeconds() || payload.iat < getSessionNotBefore(env)) {
       return null
     }
     return buildUser(payload.username)
@@ -181,95 +273,3 @@ export function unauthorizedHtml(appName = 'AeroNav') {
 </html>`
 }
 
-export async function ensureSettings(env: Env) {
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS groups (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      icon TEXT,
-      sort_order INTEGER NOT NULL,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    )`,
-  ).run()
-
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS links (
-      id TEXT PRIMARY KEY,
-      group_id TEXT NOT NULL,
-      title TEXT NOT NULL,
-      url TEXT NOT NULL,
-      icon TEXT,
-      description TEXT,
-      sort_order INTEGER NOT NULL,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL,
-      FOREIGN KEY (group_id) REFERENCES groups(id)
-    )`,
-  ).run()
-
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS settings (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      theme_mode TEXT NOT NULL DEFAULT 'system',
-      card_density TEXT NOT NULL DEFAULT 'comfortable',
-      open_in_new_tab INTEGER NOT NULL DEFAULT 1,
-      show_group_icons INTEGER NOT NULL DEFAULT 1,
-      search_engine TEXT NOT NULL DEFAULT 'bing',
-      weather_enabled INTEGER NOT NULL DEFAULT 1,
-      weather_auto_locate INTEGER NOT NULL DEFAULT 0,
-      temperature_unit TEXT NOT NULL DEFAULT 'system',
-      wallpaper_url TEXT,
-      wallpaper_overlay_opacity INTEGER NOT NULL DEFAULT 78,
-      wallpaper_blur INTEGER NOT NULL DEFAULT 0,
-      updated_at TEXT NOT NULL
-    )`,
-  ).run()
-
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS user_profiles (
-      subject TEXT PRIMARY KEY,
-      display_name TEXT,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    )`,
-  ).run()
-
-  await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS web_panels (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      url TEXT NOT NULL,
-      icon TEXT,
-      description TEXT,
-      open_mode TEXT NOT NULL DEFAULT 'iframe',
-      enabled INTEGER NOT NULL DEFAULT 1,
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    )`,
-  ).run()
-
-  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_groups_sort_order ON groups(sort_order)').run()
-  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_links_group_sort ON links(group_id, sort_order)').run()
-  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_web_panels_enabled ON web_panels(enabled)').run()
-  await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_web_panels_sort_order ON web_panels(sort_order)').run()
-
-  try {
-    await env.DB.prepare(
-      `INSERT INTO settings (id, theme_mode, card_density, open_in_new_tab, show_group_icons, search_engine, weather_enabled, weather_auto_locate, temperature_unit, wallpaper_url, wallpaper_overlay_opacity, wallpaper_blur, updated_at)
-       VALUES (1, 'system', 'comfortable', 1, 1, 'bing', 1, 0, 'system', NULL, 78, 0, ?)
-       ON CONFLICT(id) DO NOTHING`,
-    )
-      .bind(new Date().toISOString())
-      .run()
-  } catch {
-    await env.DB.prepare(
-      `INSERT INTO settings (id, theme_mode, card_density, open_in_new_tab, show_group_icons, search_engine, weather_enabled, weather_auto_locate, temperature_unit, updated_at)
-       VALUES (1, 'system', 'comfortable', 1, 1, 'bing', 1, 0, 'system', ?)
-       ON CONFLICT(id) DO NOTHING`,
-    )
-      .bind(new Date().toISOString())
-      .run()
-  }
-}

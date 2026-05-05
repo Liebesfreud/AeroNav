@@ -12,7 +12,8 @@
 		{
 			"binding": "DB",
 			"database_name": "aeronav-db",
-			"database_id": "0df301a1-53f4-4009-85f2-5f75c7b48bcf"
+			"database_id": "replace-with-your-d1-database-id",
+			"migrations_dir": "migrations"
 		}
 	],
 	"vars": {

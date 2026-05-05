@@ -3,6 +3,8 @@ import { ApiError } from '../auth/access'
 
 const CACHE_CONTROL = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400'
 const ICON_FETCH_TIMEOUT_MS = 2000
+const MAX_ICON_BYTES = 256 * 1024
+const ALLOWED_ICON_CONTENT_TYPES = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/svg+xml', 'image/jpeg', 'image/gif', 'image/webp']
 
 type TablerNode = [string, Record<string, string>]
 const tablerNodeMap = tablerNodes as unknown as Record<string, TablerNode[]>
@@ -73,6 +75,10 @@ async function getFaviconResponse(requestUrl: URL, rawUrl: string) {
     throw new ApiError(400, 'ICON_URL_INVALID', '仅支持 http 或 https 图标地址。')
   }
 
+  if (sourceUrl.hostname === 'localhost' || sourceUrl.hostname === '127.0.0.1' || sourceUrl.hostname === '::1') {
+    throw new ApiError(400, 'ICON_URL_INVALID', 'Local icon URLs are not supported')
+  }
+
   const targetUrl = new URL('/favicon.ico', sourceUrl.origin)
   const cacheKey = new Request(requestUrl.toString(), { method: 'GET' })
   const cache = caches.default
@@ -102,12 +108,32 @@ async function getFaviconResponse(requestUrl: URL, rawUrl: string) {
     return response
   }
 
-  const headers = new Headers(upstream.headers)
-  headers.set('Cache-Control', CACHE_CONTROL)
-  headers.set('Content-Type', headers.get('Content-Type') ?? 'image/x-icon')
-  headers.delete('set-cookie')
+  const contentLength = Number(upstream.headers.get('content-length'))
+  if (Number.isFinite(contentLength) && contentLength > MAX_ICON_BYTES) {
+    const response = defaultFaviconResponse()
+    await cache.put(cacheKey, response.clone())
+    return response
+  }
 
-  const response = new Response(upstream.body, {
+  const contentType = upstream.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() ?? 'image/x-icon'
+  if (!ALLOWED_ICON_CONTENT_TYPES.includes(contentType)) {
+    const response = defaultFaviconResponse()
+    await cache.put(cacheKey, response.clone())
+    return response
+  }
+
+  const body = await upstream.arrayBuffer()
+  if (body.byteLength > MAX_ICON_BYTES) {
+    const response = defaultFaviconResponse()
+    await cache.put(cacheKey, response.clone())
+    return response
+  }
+
+  const headers = new Headers()
+  headers.set('Cache-Control', CACHE_CONTROL)
+  headers.set('Content-Type', contentType)
+
+  const response = new Response(body, {
     status: upstream.status,
     headers,
   })

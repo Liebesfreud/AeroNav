@@ -11,6 +11,7 @@ dist/
 # Local env files
 .env
 .env.*
+.dev.vars
 !.env.example
 
 # Wrangler / Cloudflare local state

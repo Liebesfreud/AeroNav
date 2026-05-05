@@ -5,6 +5,7 @@ export type Env = {
   ADMIN_USERNAME?: string
   ADMIN_PASSWORD?: string
   SESSION_SECRET?: string
+  SESSION_NOT_BEFORE?: string
 }
 
 export type User = {
