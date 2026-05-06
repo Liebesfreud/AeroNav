@@ -1,4 +1,4 @@
-CREATE TABLE web_panels (
+CREATE TABLE IF NOT EXISTS web_panels (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
   url TEXT NOT NULL,
@@ -11,5 +11,5 @@ CREATE TABLE web_panels (
   updated_at TEXT NOT NULL
 );
 
-CREATE INDEX idx_web_panels_enabled ON web_panels(enabled);
-CREATE INDEX idx_web_panels_sort_order ON web_panels(sort_order);
+CREATE INDEX IF NOT EXISTS idx_web_panels_enabled ON web_panels(enabled);
+CREATE INDEX IF NOT EXISTS idx_web_panels_sort_order ON web_panels(sort_order);
