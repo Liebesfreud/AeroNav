@@ -25,7 +25,40 @@ function storeAuth(value: boolean) {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function verifySession() {
+      try {
+        const response = await fetch('/api/bootstrap', { credentials: 'same-origin' })
+        if (cancelled) return
+        if (response.ok) {
+          setAuthenticated(true)
+          storeAuth(true)
+        } else {
+          setAuthenticated(false)
+          storeAuth(false)
+        }
+      } catch {
+        if (!cancelled) {
+          setAuthenticated(false)
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void verifySession()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // Sync across tabs
   useEffect(() => {
