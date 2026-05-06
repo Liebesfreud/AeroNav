@@ -82,7 +82,7 @@ function LinkVisual({
         aria-hidden="true"
         loading="lazy"
         onError={() => setImageFailed(true)}
-        className={`h-full w-full shrink-0 object-contain ${iconClassName} ${imagePaddingClassName}`}
+        className={`${iconClassName} shrink-0 object-contain ${imagePaddingClassName}`}
       />
     )
   }
