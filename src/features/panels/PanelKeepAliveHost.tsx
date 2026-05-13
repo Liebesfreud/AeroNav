@@ -116,7 +116,7 @@ export function PanelKeepAliveHost({ bootstrapData, activePanelId }: { bootstrap
             src={cachedPanel.url}
             title={cachedPanel.title}
             className={`min-h-[calc(100vh-4.25rem)] flex-1 border-0 bg-white ${isActive ? 'block' : 'hidden'}`}
-            sandbox="allow-scripts allow-forms allow-popups allow-downloads"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
             referrerPolicy="no-referrer"
           />
         )

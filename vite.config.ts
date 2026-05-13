@@ -14,5 +14,18 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined
+          if (id.includes('@tanstack/react-query')) return 'query'
+          if (id.includes('react-router')) return 'router'
+          if (id.includes('@dnd-kit')) return 'dnd'
+          if (id.includes('@radix-ui')) return 'radix'
+          if (id.includes('zod')) return 'validation'
+          return 'vendor'
+        },
+      },
+    },
   },
 })

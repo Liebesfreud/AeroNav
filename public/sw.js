@@ -1,10 +1,22 @@
-const VERSION = 'aeronav-static-v4'
+const VERSION = 'aeronav-static-v5'
 const RUNTIME_CACHE = `runtime-${VERSION}`
 const ICON_CACHE = `icons-${VERSION}`
 const FONT_CACHE = `fonts-${VERSION}`
+const PRECACHE_URLS = ['/', '/index.html']
 
 self.addEventListener('install', (event) => {
   self.skipWaiting()
+  event.waitUntil((async () => {
+    const cache = await caches.open(RUNTIME_CACHE)
+    await Promise.all(PRECACHE_URLS.map(async (url) => {
+      try {
+        const response = await fetch(url, { credentials: 'same-origin' })
+        if (response.ok) {
+          await cache.put(url, response)
+        }
+      } catch {}
+    }))
+  })())
 })
 
 self.addEventListener('activate', (event) => {
@@ -25,6 +37,10 @@ function isGoogleFont(url) {
 
 function isIconRequest(url) {
   return url.origin === self.location.origin && url.pathname === '/api/icon'
+}
+
+function isStaticAssetRequest(url) {
+  return url.origin === self.location.origin && url.pathname.startsWith('/assets/')
 }
 
 async function staleWhileRevalidate(request, cacheName) {
@@ -58,6 +74,11 @@ self.addEventListener('fetch', (event) => {
 
   if (isIconRequest(url)) {
     event.respondWith(staleWhileRevalidate(request, ICON_CACHE))
+    return
+  }
+
+  if (request.mode === 'navigate' || isStaticAssetRequest(url)) {
+    event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE))
     return
   }
 

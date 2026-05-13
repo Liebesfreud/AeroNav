@@ -174,3 +174,17 @@ export async function getBootstrap(env: Env, user?: User) {
   const profile = await getUserProfile(env, user.subject)
   return { user: applyUserProfile(user, profile), groups, links, settings, panels }
 }
+
+export async function getBootstrapVersion(env: Env, user?: User) {
+  const [groups, links, settings, panels, profile] = await Promise.all([
+    env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM groups').first<{ version: string }>(),
+    env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM links').first<{ version: string }>(),
+    env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM settings').first<{ version: string }>(),
+    env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM web_panels').first<{ version: string }>(),
+    user ? env.DB.prepare('SELECT COALESCE(updated_at, "") AS version FROM user_profiles WHERE subject = ?').bind(user.subject).first<{ version: string }>() : null,
+  ])
+
+  return [groups?.version, links?.version, settings?.version, panels?.version, profile?.version]
+    .filter(Boolean)
+    .join('|')
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { api, ApiError, exportPayloadSchema } from '../../lib/api'
@@ -65,6 +65,7 @@ export function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [nameDraft, setNameDraft] = useState('')
   const [wallpaperDraft, setWallpaperDraft] = useState('')
+  const [settingsDraft, setSettingsDraft] = useState<Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>>({})
   const [wallpaperError, setWallpaperError] = useState<string | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const { update } = useBootstrapCache()
@@ -103,6 +104,35 @@ export function SettingsPage() {
     setNameDraft(data.user.displayName ?? '')
   }, [data])
 
+  useEffect(() => {
+    if (!data || Object.keys(settingsDraft).length === 0) return
+
+    const timer = window.setTimeout(() => {
+      updateSettings.mutate(settingsDraft)
+      setSettingsDraft({})
+    }, 400)
+
+    return () => window.clearTimeout(timer)
+  }, [data, settingsDraft, updateSettings])
+
+  const previewSettings = useMemo(() => data ? { ...data.settings, ...settingsDraft } : null, [data, settingsDraft])
+
+  const handleSaveSetting = (payload: Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>) => {
+    update((current) => ({
+      ...current,
+      settings: {
+        ...current.settings,
+        ...payload,
+      },
+    }))
+
+    if (payload.themeMode) {
+      applyTheme(payload.themeMode)
+    }
+
+    setSettingsDraft((current) => ({ ...current, ...payload }))
+  }
+
   const handleSaveWallpaper = () => {
     const parsed = normalizeWallpaperUrl(wallpaperDraft)
 
@@ -112,13 +142,13 @@ export function SettingsPage() {
     }
 
     setWallpaperError(null)
-    updateSettings.mutate({ wallpaperUrl: parsed.value })
+    handleSaveSetting({ wallpaperUrl: parsed.value })
   }
 
   const handleClearWallpaper = () => {
     setWallpaperError(null)
     setWallpaperDraft('')
-    updateSettings.mutate({ wallpaperUrl: null })
+    handleSaveSetting({ wallpaperUrl: null })
   }
 
   const handleWallpaperChange = (value: string) => {
@@ -173,7 +203,8 @@ export function SettingsPage() {
 
   const updateUserError = updateUser.error instanceof ApiError ? updateUser.error.message : null
   const settingsMutationError = updateSettings.error instanceof ApiError ? updateSettings.error.message : null
-  const { settings, user } = data
+  const settings = previewSettings ?? data.settings
+  const { user } = data
   const displayName = user.displayName || user.name || user.subject || '当前用户'
   const canSaveName = nameDraft.trim() !== (user.displayName ?? '').trim()
   const currentTab = settingTabs.find((tab) => tab.value === activeTab) ?? settingTabs[0]
@@ -214,7 +245,7 @@ export function SettingsPage() {
 
         <div className="space-y-5">
           <SettingSection icon={currentTab.icon} title={currentTab.label}>
-            {activeTab === 'general' ? <SettingsGeneralTab settings={settings} onSaveSetting={updateSettings.mutate} /> : null}
+            {activeTab === 'general' ? <SettingsGeneralTab settings={settings} onSaveSetting={handleSaveSetting} /> : null}
             {activeTab === 'appearance' ? (
               <SettingsAppearanceTab
                 settings={settings}
@@ -224,7 +255,7 @@ export function SettingsPage() {
                 onWallpaperChange={handleWallpaperChange}
                 onSaveWallpaper={handleSaveWallpaper}
                 onClearWallpaper={handleClearWallpaper}
-                onSaveSetting={updateSettings.mutate}
+                onSaveSetting={handleSaveSetting}
               />
             ) : null}
             {activeTab === 'panels' ? (

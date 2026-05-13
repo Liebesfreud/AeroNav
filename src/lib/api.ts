@@ -117,6 +117,10 @@ export type ExportPayload = z.infer<typeof exportPayloadSchema>
 export type WeatherResponse = z.infer<typeof weatherResponseSchema>
 export type BootstrapState = Omit<BootstrapData, 'user'>
 
+export type BootstrapResult =
+  | { status: 'fresh'; data: BootstrapData; version: string | null }
+  | { status: 'not-modified'; version: string | null }
+
 export type GroupCreatePayload = {
   name: string
   icon?: string | null
@@ -311,8 +315,67 @@ async function request<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   return json.data
 }
 
+async function requestBootstrap(version?: string | null): Promise<BootstrapResult> {
+  let response: Response
+
+  try {
+    response = await fetch('/api/bootstrap', {
+      credentials: 'same-origin',
+      headers: version ? { 'If-None-Match': version } : undefined,
+    })
+  } catch (error) {
+    throw new ApiError({
+      message: '网络请求失败，请检查连接后重试。',
+      code: 'NETWORK_ERROR',
+      details: error,
+    })
+  }
+
+  if (response.status === 304) {
+    return { status: 'not-modified', version: response.headers.get('ETag') }
+  }
+
+  if (response.status === 401) {
+    try { localStorage.removeItem('aeronav:auth') } catch {}
+    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+    throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
+  }
+
+  const json = await parseResponseBody<BootstrapData>(response)
+
+  if (!response.ok) {
+    if (!json.ok) {
+      throw new ApiError({
+        message: json.error.message || '请求失败。',
+        code: json.error.code || 'REQUEST_FAILED',
+        status: response.status,
+        details: json.error.details,
+      })
+    }
+
+    throw new ApiError({
+      message: '请求失败。',
+      code: 'HTTP_ERROR',
+      status: response.status,
+      details: json,
+    })
+  }
+
+  if (!json.ok) {
+    throw new ApiError({
+      message: json.error.message || '请求失败。',
+      code: json.error.code || 'REQUEST_FAILED',
+      status: response.status,
+      details: json.error.details,
+    })
+  }
+
+  return { status: 'fresh', data: json.data, version: response.headers.get('ETag') }
+}
+
 export const api = {
   bootstrap: () => request<BootstrapData>('/api/bootstrap'),
+  bootstrapIncremental: requestBootstrap,
   createGroup: (payload: GroupCreatePayload) =>
     request<{ group: Group; groups: Group[] }>('/api/groups', {
       method: 'POST',

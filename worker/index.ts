@@ -70,7 +70,7 @@ export default {
         const user = await requireUser(request, env)
 
         if (url.pathname === '/api/bootstrap' && request.method === 'GET') {
-          return await bootstrap(env, user)
+          return await bootstrap(request, env, user)
         }
         if (url.pathname === '/api/user' && request.method === 'PATCH') {
           return await updateUser(request, env, user)

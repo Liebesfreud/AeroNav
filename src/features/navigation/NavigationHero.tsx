@@ -1,4 +1,17 @@
+import { useEffect, useState } from 'react'
 import { AppIcon } from '../../components/AppIcon'
+
+const clockFormatter = new Intl.DateTimeFormat('zh-CN', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+})
+
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long',
+})
 
 type WeatherState =
   | { mode: 'hidden' }
@@ -15,14 +28,20 @@ type WeatherState =
     }
 
 export function NavigationHero({
-  timeText,
-  dateText,
   weather,
 }: {
-  timeText: string
-  dateText: string
   weather: WeatherState
 }) {
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 1000)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  const timeText = clockFormatter.format(now)
+  const dateText = dateFormatter.format(now)
+
   const weatherNode = weather.mode === 'hidden'
     ? null
     : weather.mode === 'ready'

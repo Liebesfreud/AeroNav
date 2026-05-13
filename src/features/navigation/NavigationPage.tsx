@@ -32,18 +32,6 @@ const searchEngineBaseUrl = {
   google: 'https://www.google.com/search?q=',
 } as const
 
-const clockFormatter = new Intl.DateTimeFormat('zh-CN', {
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false,
-})
-
-const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-})
-
 function roundCoordinate(value: number) {
   return Math.round(value * 1000) / 1000
 }
@@ -106,7 +94,6 @@ export function NavigationPage() {
   const [groupDraft, setGroupDraft] = useState<GroupDraft>(emptyGroupDraft)
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
-  const [now, setNow] = useState(() => new Date())
   const [coords, setCoords] = useState<{ latitude: number; longitude: number } | null>(null)
   const [locationStatus, setLocationStatus] = useState<'idle' | 'locating' | 'ready' | 'denied' | 'unsupported' | 'error'>('idle')
   const searchRef = useRef<HTMLInputElement>(null)
@@ -128,11 +115,6 @@ export function NavigationPage() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [])
 
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 1000)
-    return () => window.clearInterval(timer)
-  }, [])
-
   const groups = data?.groups ?? []
   const links = data?.links ?? []
   const settings = data?.settings
@@ -143,9 +125,6 @@ export function NavigationPage() {
   const weatherEnabled = settings?.weatherEnabled ?? true
   const weatherAutoLocate = settings?.weatherAutoLocate ?? false
   const temperatureUnit = settings?.temperatureUnit ?? 'system'
-  const timeText = clockFormatter.format(now)
-  const dateText = dateFormatter.format(now)
-
   const visibleLinks = useMemo(() => {
     if (!query) return links
     return links.filter((link) => [link.title, link.url, link.description ?? ''].some((value) => value.toLowerCase().includes(query)))
@@ -375,7 +354,7 @@ export function NavigationPage() {
       <PageContainer className="pb-4 pt-5 lg:pb-5 lg:pt-6">
         <div className="space-y-4 lg:space-y-5">
           <div className="space-y-4">
-            <NavigationHero timeText={timeText} dateText={dateText} weather={weatherState} />
+            <NavigationHero weather={weatherState} />
             <NavigationSearch
               ref={searchRef}
               value={search}
