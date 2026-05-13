@@ -130,10 +130,14 @@ export function NavigationPage() {
     return links.filter((link) => [link.title, link.url, link.description ?? ''].some((value) => value.toLowerCase().includes(query)))
   }, [links, query])
 
-  const sections = useMemo(() => groups.map((group) => ({
-    group,
-    links: visibleLinks.filter((link) => link.groupId === group.id),
-  })), [groups, visibleLinks])
+  const sections = useMemo(() => {
+    const nextSections = groups.map((group) => ({
+      group,
+      links: visibleLinks.filter((link) => link.groupId === group.id),
+    }))
+
+    return query ? nextSections.filter((section) => section.links.length > 0) : nextSections
+  }, [groups, query, visibleLinks])
 
   const hasSearchResults = sections.some((section) => section.links.length > 0)
 
@@ -365,7 +369,7 @@ export function NavigationPage() {
             />
           </div>
           {!hasSearchResults && query ? (
-                    <div className="rounded-xl border border-dashed border-outline/70 bg-surface/70 px-5 py-6 text-sm text-on-surface-variant dark:border-dark-outline/80 dark:bg-dark-surface-elevated/76 dark:text-dark-on-surface-variant">
+            <div className="rounded-xl border border-dashed border-outline/70 bg-surface/75 px-5 py-6 text-sm font-medium text-on-surface-variant shadow-sm backdrop-blur dark:border-dark-outline/80 dark:bg-dark-surface/80 dark:text-dark-on-surface-variant">
               没找到匹配的链接。按回车或点击搜索可直接搜索互联网。
             </div>
           ) : null}
@@ -385,6 +389,7 @@ export function NavigationPage() {
         onCreateLink={openCreateLink}
         onEditLink={openEditLink}
         onReorderLinks={reorderLinksInGroup}
+        hideEmptyState={Boolean(query)}
       />
       <CreateLinkDrawer
         open={linkDrawerOpen && editMode}

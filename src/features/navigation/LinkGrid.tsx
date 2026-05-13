@@ -140,11 +140,13 @@ export function LinkGrid({
   onCreateLink,
   onEditLink,
   onReorderLinks,
+  hideEmptyState = false,
 }: {
   sections: GroupSection[]
   openInNewTab: boolean
   cardDensity: 'compact' | 'comfortable'
   editMode: boolean
+  hideEmptyState?: boolean
   onCreateGroup: () => void
   onEditGroup: (group: Group) => void
   onDeleteGroup: (group: Group) => void
@@ -179,6 +181,10 @@ export function LinkGrid({
   const clearDragState = () => {
     setDraggingLinkId(null)
     setDragOverLinkId(null)
+  }
+
+  if (!sections.length && hideEmptyState) {
+    return null
   }
 
   if (!sections.length) {
